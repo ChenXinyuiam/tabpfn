@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python clean_data.py)",
+      "Bash(python -c ':*)",
+      "Bash(python scale_features.py)",
+      "Bash(uv run *)"
+    ]
+  }
+}

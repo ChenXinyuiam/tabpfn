@@ -1,0 +1,11 @@
+﻿file,pred_label,prob_focus
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_12_0.04379562_26_10_2.402402402.csv,聚焦,0.8168755384586508
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_18_0.065693431_26_10_2.402402402.csv,聚焦,0.7828301819067608
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_24_0.087591241_26_10_2.402402402.csv,聚焦,0.7336093890918123
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_30_0.109489051_26_10_2.402402402.csv,聚焦,0.6772059654913235
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_36_0.131386861_26_10_2.402402402.csv,聚焦,0.6347718668676943
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_42_0.153284672_26_10_2.402402402.csv,聚焦,0.5979282968800648
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_48_0.175182482_26_10_2.402402402.csv,聚焦,0.5101369822406334
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_54_0.197080292_26_10_2.402402402.csv,不聚焦,0.41678257437503563
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_60_0.218978102_26_10_2.402402402.csv,不聚焦,0.33681965023584337
+D:\pmc\tabpfn_project\data\triangle_groups_test\66.8_26.8_86.4\1.9_0.13_6_0.02189781_26_10_2.402402402.csv,聚焦,0.7832384633776914

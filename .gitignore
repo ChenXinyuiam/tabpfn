@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# IDE
+.idea/
+
+# macOS metadata
+__MACOSX/
+
+# Data files (large binaries)
+*.ckpt
+*.pkl

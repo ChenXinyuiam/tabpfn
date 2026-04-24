@@ -1,0 +1,10 @@
+{
+  "batch_id": "2026-04-15_batch02",
+  "received_at": "2026-04-15 10:30:00",
+  "source": "lab_export",
+  "files": [
+    "source_a.csv"
+  ],
+  "description": "April mid-month export",
+  "notes": "Contains new section data and re-exported rows from previous batch"
+}
