@@ -5,16 +5,53 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Virtual environments
 .venv
+venv/
+env/
 
 # IDE
 .idea/
+.vscode/
 
 # macOS metadata
 __MACOSX/
+.DS_Store
 
-# Data files (large binaries)
+# Local data and experiment artifacts
+data/**
+!data/
+!data/DATA_LAYOUT.md
+!data/manifests/
+!data/manifests/**/manifest.json
+results/**
+outputs/**
+dataAnalysis/**
+models/**
+
+# Large binaries and model artifacts
 *.ckpt
 *.pkl
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.rar
+
+# Tabular data exports
+*.xlsx
+*.xls
+*.csv
+*.parquet
+*.feather
+
+# Keep lockfiles and source metadata
+!uv.lock

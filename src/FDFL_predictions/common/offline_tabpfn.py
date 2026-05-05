@@ -1,2 +1,0 @@
-'''Huffing face offline patch'''
-
