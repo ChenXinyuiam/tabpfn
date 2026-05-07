@@ -20,7 +20,6 @@ Output
 """
 
 import argparse
-import os
 from pathlib import Path
 
 import numpy as np
@@ -31,20 +30,15 @@ from scipy.spatial import ConvexHull
 from src.config import PUBLISHED_PROCESSED_ROOT, BASE_COL, RE_COL
 from utils.paths import select_batch_dir
 
-DATA_DIR = os.path.join("data", "processed", "2026-04-22")
-
-
 # ── helpers (identical to generate_data.py) ──────────────────────────────────
 
 def _detect_spacing(vals: np.ndarray) -> float:
     u = np.sort(np.unique(vals))
     return float(np.min(np.diff(u))) if len(u) >= 2 else float("nan")
 
-
 def _midpoint_grid(vals: np.ndarray, spacing: float) -> np.ndarray:
     u = np.sort(np.unique(vals))
     return u[:-1] + spacing / 2.0
-
 
 def _in_hull(points: np.ndarray, hull_points: np.ndarray) -> np.ndarray:
     try:
@@ -53,7 +47,6 @@ def _in_hull(points: np.ndarray, hull_points: np.ndarray) -> np.ndarray:
         return np.ones(len(points), dtype=bool)
     A, b = hull.equations[:, :-1], hull.equations[:, -1]
     return np.all((points @ A.T + b) <= 1e-10, axis=1)
-
 
 def _interpolate(src_XZ, src_vals, tgt_XZ):
     """Cubic → linear → nearest fallback interpolation."""
@@ -66,12 +59,10 @@ def _interpolate(src_XZ, src_vals, tgt_XZ):
         result[nan_mask2] = griddata(src_XZ, src_vals, tgt_XZ[nan_mask2], method="nearest")
     return result
 
-
 # ── per-Re generation for one file ───────────────────────────────────────────
 
 def input_label(path_or_name: str | Path) -> str:
     return Path(path_or_name).stem.removesuffix("_cleaned")
-
 
 def is_source_file(path: Path) -> bool:
     return (
@@ -81,10 +72,9 @@ def is_source_file(path: Path) -> bool:
         and "_generated" not in path.stem
     )
 
-
-def generate_per_re(cleaned_fname: str) -> pd.DataFrame | None:
-    label = input_label(cleaned_fname)
-    df    = pd.read_excel(os.path.join(DATA_DIR, cleaned_fname))
+def generate_per_re(src: Path) -> pd.DataFrame | None:
+    label = input_label(src)
+    df    = pd.read_excel(src)
     cols  = df.columns.tolist()
 
     col_id = BASE_COL if BASE_COL in df.columns else cols[0]
@@ -207,28 +197,6 @@ def generate_per_re(cleaned_fname: str) -> pd.DataFrame | None:
           f"({int(total_orig)} original + {int(total_new)} new)\n")
     return gen_df
 
-
-# ── main ─────────────────────────────────────────────────────────────────────
-
-def main():
-    cleaned_files = sorted(f for f in os.listdir(DATA_DIR) if f.endswith("_cleaned.xlsx"))
-    if not cleaned_files:
-        print("No *_cleaned.xlsx files found. Run clean_data.py first.")
-        return
-
-    print(f"Found {len(cleaned_files)} cleaned files.\n")
-    for fname in cleaned_files:
-        label  = fname.replace("_cleaned.xlsx", "")
-        gen_df = generate_per_re(fname)
-        if gen_df is None:
-            continue
-        out = os.path.join(DATA_DIR, f"{label}_generated_per_re.xlsx")
-        gen_df.to_excel(out, index=False)
-        print(f"  [{label}] saved -> {out}\n")
-
-    print("Done.")
-
-
 def main():
     parser = argparse.ArgumentParser(description="Generate per-Re dense interpolated data for one processed batch.")
     parser.add_argument("--batch", default=None, help="Batch under data/processed. Defaults to the latest batch.")
@@ -237,9 +205,6 @@ def main():
     args = parser.parse_args()
 
     data_dir = args.data_dir or select_batch_dir(PUBLISHED_PROCESSED_ROOT, args.batch)
-    global DATA_DIR
-    DATA_DIR = str(data_dir)
-
     input_files = sorted(path for path in data_dir.glob(args.pattern) if is_source_file(path))
     if not input_files:
         print(f"No source .xlsx files found in {data_dir}.")
@@ -248,7 +213,7 @@ def main():
     print(f"Generating per-Re dense data for batch {data_dir.name}: {len(input_files)} file(s).\n")
     for path in input_files:
         label = input_label(path)
-        gen_df = generate_per_re(path.name)
+        gen_df = generate_per_re(path)
         if gen_df is None:
             continue
         out = data_dir / f"{label}_generated_per_re.xlsx"
@@ -256,7 +221,6 @@ def main():
         print(f"  [{label}] saved -> {out}\n")
 
     print("Done.")
-
 
 if __name__ == "__main__":
     main()

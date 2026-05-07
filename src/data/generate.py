@@ -262,32 +262,6 @@ def generate_for_file(path: Path) -> pd.DataFrame | None:
           f"× {len(sp_levels)} Re levels)\n")
     return gen_df
 
-
-# ── main ─────────────────────────────────────────────────────────────────────
-
-def main():
-    cleaned_files = sorted(
-        f for f in os.listdir(DATA_DIR) if f.endswith("_cleaned.xlsx")
-    )
-    if not cleaned_files:
-        print("No *_cleaned.xlsx files found. Run clean_data.py first.")
-        return
-
-    print(f"Found {len(cleaned_files)} cleaned files.\n")
-
-    for fname in cleaned_files:
-        label = fname.replace("_cleaned.xlsx", "")
-        gen_df = generate_for_file(fname)
-        if gen_df is None:
-            continue
-
-        out_path = os.path.join(DATA_DIR, f"{label}_generated.xlsx")
-        gen_df.to_excel(out_path, index=False)
-        print(f"  [{label}] saved → {out_path}\n")
-
-    print("Done.")
-
-
 def main():
     parser = argparse.ArgumentParser(description="Generate dense interpolated data for one processed batch.")
     parser.add_argument("--batch", default=None, help="Batch under data/processed. Defaults to the latest batch.")
