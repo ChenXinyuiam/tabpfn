@@ -1,4 +1,4 @@
-"""Feature analysis for data/processedv2/2026-05-01 without lambda features."""
+"""Feature analysis for data/interim/features/2026-05-01 without lambda features."""
 
 from __future__ import annotations
 
@@ -72,7 +72,7 @@ def as_um(series: pd.Series) -> pd.Series:
     return values
 
 
-def load_processedv2(data_dir: Path) -> pd.DataFrame:
+def load_feature_workbooks(data_dir: Path) -> pd.DataFrame:
     parts: list[pd.DataFrame] = []
     for path in sorted(data_dir.glob("*.xlsx")):
         if path.name.startswith("~$"):
@@ -85,7 +85,7 @@ def load_processedv2(data_dir: Path) -> pd.DataFrame:
         df["is_sym"] = path.name.endswith("-sym.xlsx")
         parts.append(df)
     if not parts:
-        raise FileNotFoundError(f"No processedv2 .xlsx files found under {data_dir}")
+        raise FileNotFoundError(f"No feature .xlsx files found under {data_dir}")
     df = pd.concat(parts, ignore_index=True)
     for col in df.columns:
         if col not in {"source_file", "geometry"}:
@@ -308,13 +308,13 @@ def write_tables(df: pd.DataFrame, corr: pd.DataFrame, loadings: pd.DataFrame, i
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Processedv2 feature analysis without lambda features.")
-    parser.add_argument("--data-dir", type=Path, default=Path("data/processedv2/2026-05-01"))
+    parser = argparse.ArgumentParser(description="Feature workbook analysis without lambda features.")
+    parser.add_argument("--data-dir", type=Path, default=Path("data/interim/features/2026-05-01"))
     parser.add_argument("--out-dir", type=Path, default=Path("results/feature_analysis/2026-05-01_processedv2_no_lambda"))
     args = parser.parse_args()
 
     fig_dir = args.out_dir / "figures"
-    df = add_features(load_processedv2(args.data_dir))
+    df = add_features(load_feature_workbooks(args.data_dir))
     plot_coverage(df, fig_dir)
     plot_distributions(df, fig_dir)
     corr = plot_correlation(df, fig_dir)

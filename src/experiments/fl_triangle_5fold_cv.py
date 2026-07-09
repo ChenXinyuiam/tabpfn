@@ -130,7 +130,7 @@ def fit_predict(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="5-fold triangle-level FL extrapolation.")
-    parser.add_argument("--data-root", type=Path, default=PROCESSED_DIR, help="Root directory to scan for processedv2 Excel files.")
+    parser.add_argument("--data-root", type=Path, default=PROCESSED_DIR, help="Root directory to scan for feature Excel files.")
     parser.add_argument("--results-dir", type=Path, default=RESULTS_DIR / "triangle_5fold_cv", help="Output directory.")
     parser.add_argument("--pattern", default=None, help="Optional glob pattern, e.g. '*_generated.xlsx'.")
     parser.add_argument("--recursive", action="store_true", help="Use recursive globbing with --pattern.")

@@ -12,12 +12,13 @@ MODEL_DIR = ROOT_DIR / "models" / "offline_tabpfn_2_5"
 
 DATA_DIR = ROOT_DIR / "data"
 RAW_DIR = DATA_DIR / "rawdata"
-CLEANED_DIR = DATA_DIR / "cleaned"
-SCALED_DIR = DATA_DIR / "scaled"
-PROCESSED_DIR = DATA_DIR / "processedv2"
+INTERIM_DIR = DATA_DIR / "interim"
+CLEANED_DIR = INTERIM_DIR / "cleaned"  # 原data下文件夹,已经归档到interim
+SCALED_DIR = INTERIM_DIR / "scaled"    # 原data下文件夹,已经归档到interim
+PROCESSED_DIR = INTERIM_DIR / "features" # 原data下文件夹,已经归档到interim
 PUBLISHED_PROCESSED_ROOT = DATA_DIR / "processed"
-PUBLISHED_PROCESSED_DIR = DATA_DIR / "processed" / "2026-04-22"
-TRIANGLE_GROUPS_ROOT = DATA_DIR / "triangle_groups_fixed_v2_focus" / "combined"
+PUBLISHED_PROCESSED_DIR = DATA_DIR / "processed" / "2026-04-22" # ????
+TRIANGLE_GROUPS_ROOT = DATA_DIR / "triangle_groups_fixed_v2_focus" / "combined" # ????
 
 RESULTS_DIR = ROOT_DIR / "results"
 OUTPUTS_DIR = ROOT_DIR / "outputs"
@@ -26,24 +27,24 @@ ANALYSIS_DIR = ROOT_DIR / "dataAnalysis"
 
 @dataclass(frozen=True)
 class GeometryColumns:
-    base: str = "三角形底边"
+    base: str = "三角形底边"  # BC
     x: str = "X"
     z: str = "Z"
-    re: str = "雷诺数"
-    perimeter: str = "周长"
-    area: str = "面积"
-    height: str = "高"
-    angle_a: str = "角度1"
-    angle_b: str = "角度2"
-    angle_c: str = "角度3"
-    centroid_x: str = "重心坐标X"
-    centroid_y: str = "重心坐标Y"
-    d_base: str = "点到底边距离"
-    d_left: str = "点到左边距离"
-    d_right: str = "点到右边距离"
+    re: str = "雷诺数"   # re
+    perimeter: str = "周长" # perimeter
+    area: str = "面积" # area
+    height: str = "高" # h
+    angle_a: str = "角度1" # angle_a
+    angle_b: str = "角度2" # angle_b
+    angle_c: str = "角度3" # angle_c
+    centroid_x: str = "重心坐标X" # ???? Wrong?
+    centroid_y: str = "重心坐标Y" # ???? Wrong?
+    d_base: str = "点到底边距离" #水平距离
+    d_left: str = "点到左边距离" #水平距离
+    d_right: str = "点到右边距离" #水平距离
     d_centroid: str = "点到重心距离"
-    left_side: str = "左边长度"
-    right_side: str = "右边长度"
+    left_side: str = "左边长度" # AB
+    right_side: str = "右边长度" # AC
 
 
 @dataclass(frozen=True)
@@ -95,7 +96,6 @@ SCALE_1E6 = {
     "点到左边距离",
     "点到右边距离",
     "点到重心距离",
-    "FL",
 }
 
 BASE_FEATURES = RAW_FEATURE_COLUMNS.copy()

@@ -1,0 +1,254 @@
+\documentclass[UTF8,zihao=-4]{ctexart}
+
+\usepackage[a4paper,margin=2.45cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue
+}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!65!black},
+  commentstyle=\color{green!35!black},
+  stringstyle=\color{red!55!black},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20},
+  columns=fullflexible
+}
+\lstset{style=pythonstyle}
+
+\title{\textbf{CLIP 视觉基础模型课程报告}\\
+\large 从对比语言--图像预训练到零样本分类与图像检索}
+\author{课程报告草稿}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+CLIP（Contrastive Language--Image Pre-training）是视觉基础模型中具有代表性的跨模态模型。与传统监督视觉模型依赖固定类别标签不同，CLIP 通过大规模图像--文本对比学习，把图像和自然语言映射到同一语义空间中，从而支持零样本分类、跨模态检索和开放词表识别等任务。本文以 ChenXinyuiam/VFMsPresentation 仓库中的 CLIP demo 为分析对象，讨论其模型原理、推理流程、代码实现和实验设计。该仓库实现了两个典型应用：基于 CIFAR100 类别名称的零样本图像分类，以及基于 Flickr8k 图像嵌入的相似图像检索。报告最后从工程实现和科学实验两个角度分析该 demo 的优点与局限。
+\end{abstract}
+
+\noindent\textbf{关键词：}CLIP；对比学习；视觉基础模型；零样本分类；图像检索；跨模态表征
+
+\section{引言}
+
+过去十年中，视觉模型的主流范式经历了从专用监督模型到大规模预训练模型的转变。传统图像分类系统通常在固定标签集合上训练，例如 ImageNet 分类器学习的是一组封闭类别的判别边界。这样的系统在训练集内表现优秀，但迁移到新的类别、细粒度概念或自然语言描述时，往往需要重新标注数据并微调模型。
+
+CLIP 的核心贡献在于把视觉识别问题重新表述为图像和文本之间的匹配问题。模型不再只预测一个离散标签，而是学习图像表示和文本表示之间的语义相似性。给定一张图像和若干文本候选描述，CLIP 可以计算图像与每个文本描述的匹配程度，并选择最相似的描述作为预测结果。这一机制使它自然具备开放词表能力：只要类别可以被自然语言描述，模型就可以在没有该任务专门训练数据的情况下进行推理。
+
+本文关注的代码仓库将 CLIP 应用于两个小型但有代表性的任务。第一个任务是 CIFAR100 上的零样本分类：程序把 100 个类别名转化为文本提示词，并用 CLIP 计算输入图像与这些提示词的相似度。第二个任务是 Flickr8k 图像检索：程序预先计算数据集中每张图像的 CLIP 嵌入，查询时再计算输入图像与图库图像之间的余弦相似度，返回最相似的 6 张图像。这两个任务分别体现了 CLIP 的两种典型用法：将分类转化为图文匹配，以及将视觉检索转化为向量相似度搜索。
+
+\section{CLIP 的基本方法}
+
+\subsection{双编码器架构}
+
+CLIP 采用双编码器结构：图像编码器 $f_I(\cdot)$ 将图像 $x$ 映射为向量表示，文本编码器 $f_T(\cdot)$ 将文本 $t$ 映射为向量表示。二者输出被投影到同一维度的表示空间，并进行 $L_2$ 归一化：
+\begin{equation}
+  \hat{v} = \frac{f_I(x)}{\|f_I(x)\|_2}, \qquad
+  \hat{u} = \frac{f_T(t)}{\|f_T(t)\|_2}.
+\end{equation}
+归一化之后，图像和文本之间的匹配分数可以写成点积，也等价于余弦相似度：
+\begin{equation}
+  s(x,t) = \hat{v}^{\top}\hat{u}.
+\end{equation}
+
+这种架构的一个重要工程优势是图像和文本可以分别编码。对于检索任务，图库图像的嵌入可以离线计算并缓存；在线查询时只需要编码查询图像并做向量相似度计算。这正是本仓库 Flickr8k 检索 demo 的实现方式。
+
+\subsection{对比语言--图像预训练}
+
+CLIP 的训练数据由大量图像--文本对组成。给定一个 batch 中的 $N$ 对图像和文本，模型计算所有 $N \times N$ 个图文相似度。正确匹配位于相似度矩阵的对角线上，而非对角元素表示错误匹配。训练目标可以理解为双向 InfoNCE 损失：图像到文本方向要求每张图像找到对应文本，文本到图像方向要求每段文本找到对应图像。
+
+图像到文本方向的损失可写为：
+\begin{equation}
+  \mathcal{L}_{I \rightarrow T}
+  = - \frac{1}{N}\sum_{i=1}^{N}
+  \log
+  \frac{\exp(\tau \hat{v}_i^\top \hat{u}_i)}
+  {\sum_{j=1}^{N}\exp(\tau \hat{v}_i^\top \hat{u}_j)},
+\end{equation}
+其中 $\tau$ 是可学习或设定的温度参数。文本到图像方向的损失类似：
+\begin{equation}
+  \mathcal{L}_{T \rightarrow I}
+  = - \frac{1}{N}\sum_{i=1}^{N}
+  \log
+  \frac{\exp(\tau \hat{u}_i^\top \hat{v}_i)}
+  {\sum_{j=1}^{N}\exp(\tau \hat{u}_i^\top \hat{v}_j)}.
+\end{equation}
+最终损失通常取二者平均：
+\begin{equation}
+  \mathcal{L} = \frac{1}{2}
+  \left(\mathcal{L}_{I \rightarrow T} + \mathcal{L}_{T \rightarrow I}\right).
+\end{equation}
+
+这个目标函数解释了 CLIP 为什么能够进行零样本分类。训练过程中，模型并没有只学习某个固定分类头，而是在学习“图像是否符合文本描述”。因此在下游任务中，我们可以把类别名组织成自然语言提示词，并把分类问题转化为图文匹配问题。
+
+\section{仓库实现概述}
+
+本文分析的仓库为 \href{https://github.com/ChenXinyuiam/VFMsPresentation}{ChenXinyuiam/VFMsPresentation}，其中 CLIP 子目录实现了一个 Gradio 交互式 demo。根据仓库说明，该 demo 包含两个功能：
+\begin{enumerate}[label=(\arabic*)]
+  \item 在 CIFAR100 标签空间上进行 zero-shot image classification；
+  \item 在 Flickr8k 图像集合上进行 image retrieval，并返回最相似的 6 张图像。
+\end{enumerate}
+
+CLIP demo 的主要依赖包括 PyTorch、TorchVision、OpenAI CLIP、HuggingFace Datasets、Gradio、Pillow、NumPy 和 tqdm。程序使用的模型名称为 \texttt{ViT-B/32}，即以 Vision Transformer 为图像编码器的 CLIP 变体。
+
+\begin{table}[h]
+  \centering
+  \caption{仓库中 CLIP demo 的主要文件与功能}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{4.7cm}
+                  >{\raggedright\arraybackslash}p{3.4cm}
+                  >{\raggedright\arraybackslash}p{5.7cm}}
+    \toprule
+    文件 & 作用 & 关键设计 \\
+    \midrule
+    \texttt{README.md} & 说明运行流程 & 安装依赖、预计算嵌入、启动 Gradio \\
+    \texttt{app.py} & 交互式应用入口 & CIFAR100 分类与 Flickr8k 检索两个 tab \\
+    \texttt{prepare\_embeddings.py} & 离线构建图库索引 & 下载 Flickr8k，保存图像路径和嵌入矩阵 \\
+    \texttt{requirements.txt} & 环境依赖 & PyTorch、OpenAI CLIP、datasets、gradio 等 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{任务一：CIFAR100 零样本分类}
+
+\subsection{从类别标签到文本提示}
+
+在传统分类模型中，模型最后一层通常是固定维度的线性分类头，例如 CIFAR100 对应 100 个输出节点。CLIP 的做法不同：程序首先把 100 个类别名称写成自然语言提示词：
+\begin{lstlisting}
+prompts = [f"a photo of a {name}" for name in CIFAR100_CLASSES]
+inputs = clip.tokenize(prompts).to(device)
+text_features = model.encode_text(inputs)
+\end{lstlisting}
+
+这段实现体现了 CLIP 的关键思想：类别不是模型结构的一部分，而是文本输入的一部分。只要能够构造合理的 prompt，类别集合就可以在推理阶段改变。
+
+\subsection{推理公式}
+
+设输入图像为 $x$，类别集合为 $\mathcal{Y} = \{y_1,\ldots,y_K\}$。程序为每个类别构造文本提示 $p(y_k)$，例如 ``a photo of a apple''。CLIP 分类概率可写为：
+\begin{equation}
+  P(y_k \mid x) =
+  \frac{
+    \exp(\alpha \hat{v}^{\top}\hat{u}_k)
+  }{
+    \sum_{j=1}^{K}\exp(\alpha \hat{v}^{\top}\hat{u}_j)
+  },
+\end{equation}
+其中 $\hat{v}$ 是图像嵌入，$\hat{u}_k$ 是第 $k$ 个类别提示词的文本嵌入，$\alpha$ 是缩放系数。仓库实现中使用了 \texttt{100.0 * image\_features @ CIFAR\_TEXT\_FEATURES.T}，再通过 softmax 转换成类别分布，并返回 top-5 预测。
+
+\subsection{实现细节与讨论}
+
+仓库中的分类函数先将输入图像转换为 RGB，然后将图像 resize 到 $32 \times 32$，再送入 CLIP 的 preprocess 流程。这个设计与 CIFAR100 图像原始分辨率一致，但也带来一个值得讨论的工程问题：如果用户上传的不是 CIFAR100 小图，而是一张高分辨率图像，先压缩到 $32 \times 32$ 可能会丢失大量视觉细节。由于 CLIP 的 \texttt{ViT-B/32} 通常以更高分辨率输入进行预处理，这一步更适合“模拟 CIFAR100 输入”，而不适合作为通用图像分类接口。
+
+另一个值得注意的因素是 prompt 设计。当前实现只使用单一模板 \texttt{a photo of a \{name\}}。在 CLIP 原论文和后续实践中，prompt 的措辞会影响零样本表现。例如，同一类别在不同模板下可能形成不同的文本嵌入：
+\begin{lstlisting}
+a photo of a {class}
+a blurry photo of a {class}
+a small photo of a {class}
+a cropped photo of a {class}
+\end{lstlisting}
+然后平均这些文本嵌入，得到更稳定的类别表示。这对于 CIFAR100 这类低分辨率图像尤其有意义。
+
+\section{任务二：Flickr8k 图像检索}
+
+\subsection{离线嵌入构建}
+
+检索任务的基本思路是：先为图库中每张图像计算 CLIP 图像嵌入并保存；查询时再计算输入图像的嵌入，与图库嵌入做相似度排序。仓库中的 \texttt{prepare\_embeddings.py} 使用 HuggingFace Datasets 加载 \texttt{jxie/flickr8k} 的训练集，并按 batch 计算图像特征：
+\begin{lstlisting}
+dataset = load_dataset("jxie/flickr8k", split="train")
+inputs = torch.stack([preprocess(image) for image in images]).to(device)
+image_features = model.encode_image(inputs)
+image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+\end{lstlisting}
+
+程序最终保存三个资源：图像嵌入矩阵 \texttt{flickr8k\_image\_embeddings.npy}、图像路径列表 \texttt{flickr8k\_image\_paths.txt}，以及本地保存的 Flickr8k 图像文件夹。
+
+\subsection{相似度搜索}
+
+查询阶段的实现非常直接。设图库嵌入矩阵为 $E \in \mathbb{R}^{M \times d}$，其中每一行是归一化后的图像向量；查询图像嵌入为 $\hat{q} \in \mathbb{R}^{d}$。相似度向量为：
+\begin{equation}
+  r = E\hat{q}.
+\end{equation}
+因为 $E$ 和 $\hat{q}$ 都已归一化，点积就是余弦相似度。程序随后对相似度排序，取前 6 个索引：
+\begin{lstlisting}
+scores = FLICKR_INDEX @ query.cpu().numpy()[0]
+top_indices = np.argsort(scores)[-6:][::-1]
+\end{lstlisting}
+
+这个实现适合教学展示，因为它把 CLIP 检索的核心机制完整暴露出来：预计算嵌入、归一化、矩阵乘法、排序。但是对于更大规模图库，线性扫描会成为瓶颈，检索延迟会随图库规模增长而上升。
+
+\section{实验设计评价}
+
+\subsection{优点}
+
+该 demo 的最大优点是任务选择清晰。CIFAR100 zero-shot 分类展示了 CLIP 如何把文本类别变成分类器；Flickr8k 图像检索展示了 CLIP 如何作为通用视觉嵌入模型使用。这两个任务覆盖了 CLIP 的两个核心应用面向：语义分类和向量检索。
+
+工程上，代码结构也较适合课程展示。模型加载、文本特征构建、图像特征计算和 Gradio 前端之间的边界比较清楚。尤其是 Flickr8k 部分把离线索引构建和在线查询分开，符合真实检索系统的基本设计。
+
+\subsection{局限}
+
+从实验严谨性看，当前 demo 更接近展示系统，而不是完整实验报告。它缺少以下几类量化结果：
+\begin{enumerate}[label=(\arabic*)]
+  \item CIFAR100 zero-shot 分类没有报告 top-1 或 top-5 accuracy；
+  \item Flickr8k 检索没有报告 Recall@K、mAP 或人工相关性评价；
+  \item 没有比较不同 prompt 模板对结果的影响；
+  \item 没有比较 CPU 与 GPU 推理速度或不同 batch size 的索引构建效率。
+\end{enumerate}
+
+此外，CIFAR100 类别中存在一些语义歧义。例如 \texttt{plain} 可能被理解为 ``plain surface'' 或 ``airplane'' 之外的含义；\texttt{ray} 可能表示动物，也可能表示光线。CLIP 的零样本分类高度依赖文本提示，因此类别名本身的歧义会直接影响分类效果。
+
+\section{结论}
+
+CLIP 的重要性不只在于它在若干 benchmark 上表现良好，而在于它改变了视觉任务的接口形式。传统视觉模型通常要求开发者预先定义固定标签集合，而 CLIP 允许用户用自然语言描述任务目标。本文分析的仓库虽然规模不大，但很好地展示了这一思想：CIFAR100 分类被实现为图像与类别提示词的相似度计算，Flickr8k 检索被实现为归一化图像嵌入之间的最近邻搜索。
+
+从课程报告角度看，这个 demo 已经足以说明 CLIP 作为视觉基础模型的核心能力：跨模态语义对齐、零样本迁移和通用图像嵌入。同时，它也显示出 CLIP 在真实应用中的边界：模型表现会受到 prompt 表达、输入分辨率、类别语义歧义和检索规模的影响。
+
+\begin{thebibliography}{9}
+
+\bibitem{radford2021clip}
+Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever.
+\newblock Learning Transferable Visual Models From Natural Language Supervision.
+\newblock In \emph{Proceedings of the 38th International Conference on Machine Learning}, 2021.
+
+\bibitem{dosovitskiy2021vit}
+Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby.
+\newblock An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem{krizhevsky2009cifar}
+Alex Krizhevsky.
+\newblock Learning Multiple Layers of Features from Tiny Images.
+\newblock Technical report, University of Toronto, 2009.
+
+\bibitem{hodosh2013flickr8k}
+Micah Hodosh, Peter Young, and Julia Hockenmaier.
+\newblock Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics.
+\newblock \emph{Journal of Artificial Intelligence Research}, 47:853--899, 2013.
+
+\bibitem{openai_clip_repo}
+OpenAI.
+\newblock CLIP GitHub Repository.
+\newblock \url{https://github.com/openai/CLIP}.
+
+\bibitem{vfm_repo}
+ChenXinyuiam.
+\newblock VFMsPresentation Repository.
+\newblock \url{https://github.com/ChenXinyuiam/VFMsPresentation}.
+
+\end{thebibliography}
+
+\end{document}

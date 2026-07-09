@@ -39,6 +39,14 @@ def iter_excel_files_recursive(directory: Path, suffix: str = ".xlsx") -> list[P
     )
 
 
+def iter_excel_files_for_batch(directory: Path, suffix: str = ".xlsx") -> list[Path]:
+    """Return workbook files in a batch, including nested group folders."""
+    direct_files = iter_excel_files(directory, suffix=suffix)
+    if direct_files:
+        return direct_files
+    return iter_excel_files_recursive(directory, suffix=suffix)
+
+
 def batch_dirs(root: Path) -> list[Path]:
     """Return child batch directories when present, otherwise the root itself."""
     children = sorted(path for path in root.iterdir() if path.is_dir())

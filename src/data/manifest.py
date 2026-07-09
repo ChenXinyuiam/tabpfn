@@ -23,7 +23,7 @@ STAGES = {
     "raw": RAW_DIR,
     "cleaned": CLEANED_DIR,
     "scaled": SCALED_DIR,
-    "processedv2": PROCESSED_DIR,
+    "features": PROCESSED_DIR,
     "processed": PUBLISHED_PROCESSED_ROOT,
 }
 

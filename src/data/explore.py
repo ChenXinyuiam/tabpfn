@@ -2,9 +2,9 @@
 Exploratory data analysis for processed Excel files.
 
 Usage (run from project root):
-    python -m src.data.explore                        # default: data/processedv2
-    python -m src.data.explore --dir data/cleaned
-    python -m src.data.explore --dir data/scaled --verbose
+    python -m src.data.explore                        # default: data/interim/features
+    python -m src.data.explore --dir data/interim/cleaned
+    python -m src.data.explore --dir data/interim/scaled --verbose
 """
 
 import argparse
@@ -104,7 +104,7 @@ def eda_file(file_path: Path, verbose: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Exploratory data analysis for Excel files")
-    parser.add_argument("--dir", type=Path, default=Path("data/processedv2"),
+    parser.add_argument("--dir", type=Path, default=Path("data/interim/features"),
                         help="Directory containing .xlsx files")
     parser.add_argument("--verbose", action="store_true",
                         help="Print dtypes, first rows, and descriptive stats")

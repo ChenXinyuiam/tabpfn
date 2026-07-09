@@ -24,7 +24,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-from src.config import PUBLISHED_PROCESSED_ROOT
+from src.config import PUBLISHED_PROCESSED_ROOT, RE_COL
 from utils.paths import select_batch_dir
 
 DATA_DIR = "data/processed/2026-04-22"
@@ -55,7 +55,7 @@ def configure_paths(data_dir: Path) -> None:
 def load(fname):
     df    = pd.read_excel(os.path.join(DATA_DIR, fname))
     label = fname.replace("_generated_per_re.xlsx", "")
-    col_sp = df.columns[3]          # Re column
+    col_sp = RE_COL if RE_COL in df.columns else df.columns[3]
     return df, label, col_sp
 
 
@@ -146,8 +146,10 @@ def plot_overall(df, label, col_sp):
 
 def plot_per_re(df, label, col_sp):
     sp_levels = sorted(df[col_sp].unique())
-    ncols, nrows = 5, 2
+    ncols = min(5, max(1, len(sp_levels)))
+    nrows = int(np.ceil(len(sp_levels) / ncols))
     fig, axes = plt.subplots(nrows, ncols, figsize=(5 * ncols, 4 * nrows))
+    axes = np.atleast_2d(axes)
     fig.suptitle(f"FL per Re level — {label}", fontsize=13, fontweight="bold")
 
     # compute a shared colour scale across all Re levels for comparability

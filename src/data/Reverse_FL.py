@@ -11,7 +11,7 @@ import sys
 import pandas as pd
 
 from src.config import PROCESSED_DIR, PUBLISHED_PROCESSED_DIR, PUBLISHED_PROCESSED_ROOT
-from utils.paths import ensure_dir, iter_excel_files, select_batch_dir
+from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
 
 INPUT_DIR = PROCESSED_DIR
 OUTPUT_DIR = PUBLISHED_PROCESSED_DIR
@@ -35,7 +35,7 @@ def copy_file(src, dst) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Reverse FL signs for one processed-data batch.")
-    parser.add_argument("--batch", default=None, help="Batch folder under data/processedv2. Defaults to the latest batch.")
+    parser.add_argument("--batch", default=None, help="Batch folder under data/interim/features. Defaults to the latest batch.")
     args = parser.parse_args()
 
     if not INPUT_DIR.exists():
@@ -46,7 +46,7 @@ def main() -> None:
 
     xlsx_files = [
         path
-        for path in iter_excel_files(batch_dir)
+        for path in iter_excel_files_for_batch(batch_dir)
         if path.name.endswith("-FL.xlsx") or path.name.endswith("-sym.xlsx")
     ]
 
@@ -57,8 +57,9 @@ def main() -> None:
     ensure_dir(dst_root)
     print(f"Processing batch {batch_name or '(root)'}: {len(xlsx_files)} file(s) -> {dst_root}/")
     for src in xlsx_files:
-        dst = dst_root / src.name
-        print(f"  {src.name}", end=" ... ", flush=True)
+        relative_path = src.relative_to(batch_dir)
+        dst = ensure_dir(dst_root / relative_path.parent) / src.name
+        print(f"  {relative_path}", end=" ... ", flush=True)
         if src.name.endswith("-sym.xlsx"):
             process_file(src, dst)
         else:

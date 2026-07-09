@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TriFocus ForceLab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span>
+          </div>
+          <div>
+            <p class="eyebrow" data-i18n="productEyebrow">微流道三角截面设计</p>
+            <h1 data-i18n="productName">TriFocus ForceLab</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="status-pill" id="modelStatus">
+            <span class="status-dot"></span>
+            <span data-i18n="demoModel">演示代理模型</span>
+          </div>
+          <button class="ghost-button" id="languageToggle" type="button" aria-label="Switch language">EN</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <aside class="control-panel" aria-label="Triangle inputs">
+          <div class="panel-section">
+            <div class="section-heading">
+              <p class="eyebrow" data-i18n="stepOne">01 输入</p>
+              <h2 data-i18n="inputTitle">只输入三条边</h2>
+            </div>
+
+            <form id="triangleForm" class="input-grid" novalidate>
+              <label class="field">
+                <span>AB</span>
+                <div class="input-wrap">
+                  <input id="sideAB" name="sideAB" type="number" min="1" step="1" value="690" inputmode="decimal" />
+                  <span>um</span>
+                </div>
+              </label>
+
+              <label class="field">
+                <span>AC</span>
+                <div class="input-wrap">
+                  <input id="sideAC" name="sideAC" type="number" min="1" step="1" value="520" inputmode="decimal" />
+                  <span>um</span>
+                </div>
+              </label>
+
+              <label class="field">
+                <span>BC</span>
+                <div class="input-wrap">
+                  <input id="sideBC" name="sideBC" type="number" min="1" step="1" value="750" inputmode="decimal" />
+                  <span>um</span>
+                </div>
+              </label>
+
+              <p class="form-error" id="formError" role="alert"></p>
+
+              <button class="primary-button" type="submit">
+                <span data-i18n="predictButton">生成并预测</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="panel-section">
+            <div class="section-heading compact">
+              <p class="eyebrow" data-i18n="stepTwo">02 雷诺数扫描</p>
+              <h2 data-i18n="reTitle">寻找可聚焦区间</h2>
+            </div>
+            <div class="re-strip" id="reStrip" aria-label="Re sweep"></div>
+            <div class="range-readout">
+              <span data-i18n="currentRe">当前 Re</span>
+              <strong id="currentReLabel">36</strong>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="section-heading compact">
+              <p class="eyebrow" data-i18n="stepThree">03 图层</p>
+              <h2 data-i18n="layerTitle">力场视图</h2>
+            </div>
+            <div class="layer-tabs" role="tablist" aria-label="Force layers">
+              <button class="layer-tab active" type="button" data-layer="total" data-i18n="layerTotal">合力</button>
+              <button class="layer-tab" type="button" data-layer="flx" data-i18n="layerFLX">FL-x</button>
+              <button class="layer-tab" type="button" data-layer="fly" data-i18n="layerFLY">FL-y</button>
+              <button class="layer-tab" type="button" data-layer="fdx" data-i18n="layerFDX">Dean-x</button>
+              <button class="layer-tab" type="button" data-layer="fdy" data-i18n="layerFDY">Dean-y</button>
+              <button class="layer-tab" type="button" data-layer="focus" data-i18n="layerFocus">聚焦</button>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="download-row">
+              <button class="secondary-button" id="downloadCsv" type="button" data-i18n="downloadCsv">下载 CSV</button>
+              <button class="secondary-button" id="downloadPng" type="button" data-i18n="downloadPng">下载 PNG</button>
+            </div>
+            <p class="note" data-i18n="demoNote">
+              本页面为演示代理模型，字段和交互按需求文档设计，后续可替换为真实 TabPFN 服务。
+            </p>
+          </div>
+        </aside>
+
+        <section class="visual-panel" aria-label="Visualization">
+          <div class="canvas-toolbar">
+            <div>
+              <p class="eyebrow" data-i18n="visualEyebrow">实时截面力场</p>
+              <h2 id="visualTitle" data-i18n="visualTitle">合力分布与聚焦位置</h2>
+            </div>
+            <div class="legend" id="legend">
+              <span class="legend-chip low"></span>
+              <span data-i18n="legendLow">低</span>
+              <span class="legend-ramp"></span>
+              <span data-i18n="legendHigh">高</span>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="forceCanvas" width="1120" height="760" aria-label="Triangle force field"></canvas>
+            <div class="tooltip" id="tooltip" hidden></div>
+          </div>
+        </section>
+
+        <aside class="insight-panel" aria-label="Results">
+          <div class="focus-summary">
+            <p class="eyebrow" data-i18n="focusEyebrow">聚焦判断</p>
+            <h2 id="focusStatus">弱聚焦</h2>
+            <div class="confidence-meter" aria-label="Focus confidence">
+              <span id="confidenceFill"></span>
+            </div>
+            <p id="focusReason" class="summary-text"></p>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric">
+              <span data-i18n="focusRange">可聚焦 Re</span>
+              <strong id="focusRange">30 - 48</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="focusPoint">聚焦位置</span>
+              <strong id="focusPoint">(0, 0)</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="pointCount">采样点</span>
+              <strong id="pointCount">200</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="modelVersion">模型版本</span>
+              <strong>demo-v1</strong>
+            </div>
+          </div>
+
+          <div class="data-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="metricName">指标</th>
+                  <th data-i18n="metricMin">最小</th>
+                  <th data-i18n="metricAvg">平均</th>
+                  <th data-i18n="metricMax">最大</th>
+                </tr>
+              </thead>
+              <tbody id="statsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="geometry-list">
+            <div>
+              <span data-i18n="areaLabel">面积</span>
+              <strong id="areaValue">0</strong>
+            </div>
+            <div>
+              <span data-i18n="perimeterLabel">周长</span>
+              <strong id="perimeterValue">0</strong>
+            </div>
+            <div>
+              <span data-i18n="heightLabel">高度</span>
+              <strong id="heightValue">0</strong>
+            </div>
+            <div>
+              <span data-i18n="angleLabel">角度</span>
+              <strong id="anglesValue">0 / 0 / 0</strong>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

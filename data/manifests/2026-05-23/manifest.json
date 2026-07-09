@@ -1,0 +1,2712 @@
+{
+  "batch": "2026-05-23",
+  "generated_at": "2026-05-23T22:23:56",
+  "roots": {
+    "raw": "D:/2026/tab/tabpfn/data/rawdata",
+    "cleaned": "D:/2026/tab/tabpfn/data/cleaned",
+    "scaled": "D:/2026/tab/tabpfn/data/scaled",
+    "processedv2": "D:/2026/tab/tabpfn/data/processedv2",
+    "processed": "D:/2026/tab/tabpfn/data/processed"
+  },
+  "stages": {
+    "raw": [
+      {
+        "name": "690-340-FLy1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/690-340-FLy1.xlsx",
+        "bytes": 91279,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "到AB垂直距离",
+          "到AC垂直距离",
+          "到BC垂直距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "Fly"
+        ]
+      },
+      {
+        "name": "720-500-FLy1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/720-500-FLy1.xlsx",
+        "bytes": 135269,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "到AB垂直距离",
+          "到AC垂直距离",
+          "到BC垂直距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "Fly"
+        ]
+      },
+      {
+        "name": "750-400-Fly1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/750-400-Fly1.xlsx",
+        "bytes": 65428,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "点到AB的垂直距离",
+          "点到AC的垂直距离",
+          "点到BC的垂直距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "Fly"
+        ]
+      },
+      {
+        "name": "750-530-FLy1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/750-530-FLy1.xlsx",
+        "bytes": 86965,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "点到AB的垂直距离",
+          "点到AC的垂直距离",
+          "点到BC的垂直距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "Fly"
+        ]
+      },
+      {
+        "name": "770-330-FLy1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/770-330-FLy1.xlsx",
+        "bytes": 83839,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "点到AB的垂直距离",
+          "点到AC的垂直距离",
+          "点到BC的垂直距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "Fly"
+        ]
+      },
+      {
+        "name": "830-3416-FLy1.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/830-3416-FLy1.xlsx",
+        "bytes": 69557,
+        "kind": "other",
+        "columns": [
+          "BC",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度A",
+          "角度B",
+          "角度C",
+          "点到AB的垂直距离",
+          "点到AC的垂直距离",
+          "点到BC的垂直距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FLy"
+        ]
+      },
+      {
+        "name": "manifest.md",
+        "path": "D:/2026/tab/tabpfn/data/rawdata/2026-05-23/manifest.md",
+        "bytes": 15,
+        "kind": "other"
+      }
+    ],
+    "cleaned": [
+      {
+        "name": "690-340-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/690-340-FL.xlsx",
+        "bytes": 57068,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "720-500-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/720-500-FL.xlsx",
+        "bytes": 81682,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "750-400-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/750-400-FL.xlsx",
+        "bytes": 48358,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "750-530-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/750-530-FL.xlsx",
+        "bytes": 51221,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "770-330-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/770-330-FL.xlsx",
+        "bytes": 51144,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "830-3416-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/cleaned/2026-05-23/830-3416-FL.xlsx",
+        "bytes": 42654,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      }
+    ],
+    "scaled": [
+      {
+        "name": "690-340-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/690-340-FL.xlsx",
+        "bytes": 56582,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "720-500-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/720-500-FL.xlsx",
+        "bytes": 80991,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "750-400-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/750-400-FL.xlsx",
+        "bytes": 48138,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "750-530-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/750-530-FL.xlsx",
+        "bytes": 51204,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "770-330-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/770-330-FL.xlsx",
+        "bytes": 50652,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      },
+      {
+        "name": "830-3416-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/scaled/2026-05-23/830-3416-FL.xlsx",
+        "bytes": 41916,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL"
+        ]
+      }
+    ],
+    "processedv2": [
+      {
+        "name": "690-340-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/690-340-FL.xlsx",
+        "bytes": 112583,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "720-500-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/720-500-FL.xlsx",
+        "bytes": 165369,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "750-400-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/750-400-FL.xlsx",
+        "bytes": 101513,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "750-530-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/750-530-FL.xlsx",
+        "bytes": 113004,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "770-330-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/770-330-FL.xlsx",
+        "bytes": 100593,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "830-3416-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processedv2/2026-05-23/830-3416-FL.xlsx",
+        "bytes": 91042,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      }
+    ],
+    "processed": [
+      {
+        "name": "690-340-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/690-340-FL.xlsx",
+        "bytes": 112583,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "690-340-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/690-340-FL_generated.xlsx",
+        "bytes": 424680,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "690-340-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/690-340-FL_generated_per_re.xlsx",
+        "bytes": 424680,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "720-500-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/720-500-FL.xlsx",
+        "bytes": 165369,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "720-500-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/720-500-FL_generated.xlsx",
+        "bytes": 718535,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "720-500-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/720-500-FL_generated_per_re.xlsx",
+        "bytes": 718535,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "到AB直线距离",
+          "到AC直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "750-400-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-400-FL.xlsx",
+        "bytes": 101513,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "750-400-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-400-FL_generated.xlsx",
+        "bytes": 443470,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "750-400-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-400-FL_generated_per_re.xlsx",
+        "bytes": 443469,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "750-530-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-530-FL.xlsx",
+        "bytes": 113004,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "750-530-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-530-FL_generated.xlsx",
+        "bytes": 491499,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "750-530-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/750-530-FL_generated_per_re.xlsx",
+        "bytes": 491499,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "770-330-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/770-330-FL.xlsx",
+        "bytes": 100593,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "770-330-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/770-330-FL_generated.xlsx",
+        "bytes": 445136,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "770-330-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/770-330-FL_generated_per_re.xlsx",
+        "bytes": 445136,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "830-3416-FL.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/830-3416-FL.xlsx",
+        "bytes": 91042,
+        "kind": "fl_original",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到右边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm"
+        ]
+      },
+      {
+        "name": "830-3416-FL_generated.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/830-3416-FL_generated.xlsx",
+        "bytes": 378090,
+        "kind": "augmented",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "830-3416-FL_generated_per_re.xlsx",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/830-3416-FL_generated_per_re.xlsx",
+        "bytes": 378087,
+        "kind": "augmented_per_re",
+        "columns": [
+          "三角形底边",
+          "AB",
+          "AC",
+          "X",
+          "Z",
+          "雷诺数",
+          "周长",
+          "面积",
+          "高",
+          "角度1",
+          "角度2",
+          "角度3",
+          "点到左边距离",
+          "点到底边距离",
+          "点到AB的直线距离",
+          "点到AC的直线距离",
+          "FL",
+          "面积_calc",
+          "角和",
+          "geometry_valid",
+          "右边长度",
+          "左边长度",
+          "lambda_A",
+          "lambda_B",
+          "lambda_C",
+          "lambda_sum",
+          "lambda_A_norm",
+          "lambda_B_norm",
+          "lambda_C_norm",
+          "generated"
+        ]
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 480316,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 483869,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 512183,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 502546,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 482062,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 482438,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 461726,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 475969,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 456962,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 455112,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 462673,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 460099,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 468573,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 445322,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 456555,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 469378,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 460473,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 429139,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_19.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_19.png",
+        "bytes": 481267,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_20.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/re_fl_scatter_group_20.png",
+        "bytes": 297187,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/690-340-FL_generated_per_re/valid_positions.csv",
+        "bytes": 2083,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 451021,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 456916,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 433941,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 462714,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 457363,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 466326,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 457611,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 446342,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 448040,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 453353,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 432970,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 485198,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 468269,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 473868,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 450068,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 495375,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 462222,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 470714,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_19.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_19.png",
+        "bytes": 471606,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_20.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_20.png",
+        "bytes": 447408,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_21.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_21.png",
+        "bytes": 468376,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_22.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_22.png",
+        "bytes": 467494,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_23.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_23.png",
+        "bytes": 469409,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_24.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_24.png",
+        "bytes": 446356,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_25.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_25.png",
+        "bytes": 455850,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_26.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_26.png",
+        "bytes": 484708,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_27.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_27.png",
+        "bytes": 479133,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_28.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_28.png",
+        "bytes": 440024,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_29.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_29.png",
+        "bytes": 441594,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_30.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_30.png",
+        "bytes": 441375,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_31.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_31.png",
+        "bytes": 460887,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_32.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/re_fl_scatter_group_32.png",
+        "bytes": 185120,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/720-500-FL_generated_per_re/valid_positions.csv",
+        "bytes": 3354,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 453233,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 423096,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 419039,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 400699,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 449422,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 444140,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 474058,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 467959,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 462259,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 473178,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 447443,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 466490,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 477938,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 458343,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 473984,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 451028,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 490175,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 492570,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_19.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_19.png",
+        "bytes": 502323,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_20.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_20.png",
+        "bytes": 497640,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_21.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/re_fl_scatter_group_21.png",
+        "bytes": 197854,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-400-FL_generated_per_re/valid_positions.csv",
+        "bytes": 2155,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 466867,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 420268,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 439938,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 434130,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 439821,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 457032,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 474825,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 470568,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 447670,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 442503,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 448999,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 454633,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 459419,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 488662,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 468917,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 461139,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 462281,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 475091,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_19.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_19.png",
+        "bytes": 493406,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_20.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_20.png",
+        "bytes": 461578,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_21.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_21.png",
+        "bytes": 479988,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_22.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/re_fl_scatter_group_22.png",
+        "bytes": 274496,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/750-530-FL_generated_per_re/valid_positions.csv",
+        "bytes": 2292,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 463472,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 454463,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 462104,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 479552,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 458432,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 478378,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 478527,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 478261,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 475500,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 471767,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 459130,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 478042,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 462086,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 458665,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 436497,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 458584,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 467689,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 452280,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_19.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_19.png",
+        "bytes": 450825,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_20.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/re_fl_scatter_group_20.png",
+        "bytes": 271233,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/770-330-FL_generated_per_re/valid_positions.csv",
+        "bytes": 2069,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_01.png",
+        "bytes": 431410,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_02.png",
+        "bytes": 435064,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_03.png",
+        "bytes": 442724,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_04.png",
+        "bytes": 440273,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_05.png",
+        "bytes": 468362,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_06.png",
+        "bytes": 455445,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_07.png",
+        "bytes": 472257,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_08.png",
+        "bytes": 429595,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_09.png",
+        "bytes": 448287,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_10.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_10.png",
+        "bytes": 469655,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_11.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_11.png",
+        "bytes": 474710,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_12.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_12.png",
+        "bytes": 498849,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_13.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_13.png",
+        "bytes": 467059,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_14.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_14.png",
+        "bytes": 472449,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_15.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_15.png",
+        "bytes": 481856,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_16.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_16.png",
+        "bytes": 478744,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_17.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_17.png",
+        "bytes": 495237,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_18.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/re_fl_scatter_group_18.png",
+        "bytes": 422487,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_generated_per_re/830-3416-FL_generated_per_re/valid_positions.csv",
+        "bytes": 1878,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_01.png",
+        "bytes": 474947,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_02.png",
+        "bytes": 476701,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_03.png",
+        "bytes": 435488,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_04.png",
+        "bytes": 448401,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_05.png",
+        "bytes": 437143,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/re_fl_scatter_group_06.png",
+        "bytes": 248969,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/690-340-FL/valid_positions.csv",
+        "bytes": 600,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_01.png",
+        "bytes": 457393,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_02.png",
+        "bytes": 469049,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_03.png",
+        "bytes": 447979,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_04.png",
+        "bytes": 495912,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_05.png",
+        "bytes": 465847,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_06.png",
+        "bytes": 494101,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_07.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_07.png",
+        "bytes": 469535,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_08.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_08.png",
+        "bytes": 452147,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_09.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/re_fl_scatter_group_09.png",
+        "bytes": 100862,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/720-500-FL/valid_positions.csv",
+        "bytes": 884,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_01.png",
+        "bytes": 452422,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_02.png",
+        "bytes": 450368,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_03.png",
+        "bytes": 486598,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_04.png",
+        "bytes": 481056,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_05.png",
+        "bytes": 462811,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/re_fl_scatter_group_06.png",
+        "bytes": 412729,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-400-FL/valid_positions.csv",
+        "bytes": 632,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_01.png",
+        "bytes": 447265,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_02.png",
+        "bytes": 453367,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_03.png",
+        "bytes": 474389,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_04.png",
+        "bytes": 470759,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_05.png",
+        "bytes": 479008,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_06.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/re_fl_scatter_group_06.png",
+        "bytes": 366878,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/750-530-FL/valid_positions.csv",
+        "bytes": 623,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/re_fl_scatter_group_01.png",
+        "bytes": 471712,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/re_fl_scatter_group_02.png",
+        "bytes": 500572,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/re_fl_scatter_group_03.png",
+        "bytes": 480677,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/re_fl_scatter_group_04.png",
+        "bytes": 467850,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/re_fl_scatter_group_05.png",
+        "bytes": 434145,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/770-330-FL/valid_positions.csv",
+        "bytes": 535,
+        "kind": "other"
+      },
+      {
+        "name": "re_fl_scatter_group_01.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/re_fl_scatter_group_01.png",
+        "bytes": 431286,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_02.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/re_fl_scatter_group_02.png",
+        "bytes": 470504,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_03.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/re_fl_scatter_group_03.png",
+        "bytes": 484734,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_04.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/re_fl_scatter_group_04.png",
+        "bytes": 502009,
+        "kind": "figure"
+      },
+      {
+        "name": "re_fl_scatter_group_05.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/re_fl_scatter_group_05.png",
+        "bytes": 508425,
+        "kind": "figure"
+      },
+      {
+        "name": "valid_positions.csv",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/fl_re_original/830-3416-FL/valid_positions.csv",
+        "bytes": 543,
+        "kind": "other"
+      },
+      {
+        "name": "690-340-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/690-340-FL_generated_FL.png",
+        "bytes": 341954,
+        "kind": "figure"
+      },
+      {
+        "name": "720-500-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/720-500-FL_generated_FL.png",
+        "bytes": 410905,
+        "kind": "figure"
+      },
+      {
+        "name": "750-400-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/750-400-FL_generated_FL.png",
+        "bytes": 199792,
+        "kind": "figure"
+      },
+      {
+        "name": "750-530-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/750-530-FL_generated_FL.png",
+        "bytes": 312495,
+        "kind": "figure"
+      },
+      {
+        "name": "770-330-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/770-330-FL_generated_FL.png",
+        "bytes": 319219,
+        "kind": "figure"
+      },
+      {
+        "name": "830-3416-FL_generated_FL.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/830-3416-FL_generated_FL.png",
+        "bytes": 323193,
+        "kind": "figure"
+      },
+      {
+        "name": "ALL_generated_FL_summary.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/generated/ALL_generated_FL_summary.png",
+        "bytes": 133036,
+        "kind": "figure"
+      },
+      {
+        "name": "690-340_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/690-340_original.png",
+        "bytes": 217751,
+        "kind": "figure"
+      },
+      {
+        "name": "720-500_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/720-500_original.png",
+        "bytes": 239975,
+        "kind": "figure"
+      },
+      {
+        "name": "750-400_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/750-400_original.png",
+        "bytes": 134660,
+        "kind": "figure"
+      },
+      {
+        "name": "750-530_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/750-530_original.png",
+        "bytes": 193669,
+        "kind": "figure"
+      },
+      {
+        "name": "770-330_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/770-330_original.png",
+        "bytes": 185679,
+        "kind": "figure"
+      },
+      {
+        "name": "830-3416_original.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/830-3416_original.png",
+        "bytes": 192480,
+        "kind": "figure"
+      },
+      {
+        "name": "ALL_original_FL_summary.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/original_all/ALL_original_FL_summary.png",
+        "bytes": 121232,
+        "kind": "figure"
+      },
+      {
+        "name": "690-340-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/690-340-FL_overall.png",
+        "bytes": 312843,
+        "kind": "figure"
+      },
+      {
+        "name": "720-500-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/720-500-FL_overall.png",
+        "bytes": 402216,
+        "kind": "figure"
+      },
+      {
+        "name": "750-400-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/750-400-FL_overall.png",
+        "bytes": 329370,
+        "kind": "figure"
+      },
+      {
+        "name": "750-530-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/750-530-FL_overall.png",
+        "bytes": 312336,
+        "kind": "figure"
+      },
+      {
+        "name": "770-330-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/770-330-FL_overall.png",
+        "bytes": 297124,
+        "kind": "figure"
+      },
+      {
+        "name": "830-3416-FL_overall.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/overall/830-3416-FL_overall.png",
+        "bytes": 305817,
+        "kind": "figure"
+      },
+      {
+        "name": "690-340-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/690-340-FL_per_re.png",
+        "bytes": 98292,
+        "kind": "figure"
+      },
+      {
+        "name": "720-500-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/720-500-FL_per_re.png",
+        "bytes": 121696,
+        "kind": "figure"
+      },
+      {
+        "name": "750-400-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/750-400-FL_per_re.png",
+        "bytes": 83599,
+        "kind": "figure"
+      },
+      {
+        "name": "750-530-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/750-530-FL_per_re.png",
+        "bytes": 100413,
+        "kind": "figure"
+      },
+      {
+        "name": "770-330-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/770-330-FL_per_re.png",
+        "bytes": 102381,
+        "kind": "figure"
+      },
+      {
+        "name": "830-3416-FL_per_re.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/per_re/830-3416-FL_per_re.png",
+        "bytes": 112343,
+        "kind": "figure"
+      },
+      {
+        "name": "ALL_per_re_summary.png",
+        "path": "D:/2026/tab/tabpfn/data/processed/2026-05-23/figures/per_re/summary/ALL_per_re_summary.png",
+        "bytes": 137004,
+        "kind": "figure"
+      }
+    ]
+  },
+  "summary": {
+    "raw": {
+      "file_count": 7,
+      "xlsx_count": 6,
+      "kinds": {
+        "other": 7
+      }
+    },
+    "cleaned": {
+      "file_count": 6,
+      "xlsx_count": 6,
+      "kinds": {
+        "fl_original": 6
+      }
+    },
+    "scaled": {
+      "file_count": 6,
+      "xlsx_count": 6,
+      "kinds": {
+        "fl_original": 6
+      }
+    },
+    "processedv2": {
+      "file_count": 6,
+      "xlsx_count": 6,
+      "kinds": {
+        "fl_original": 6
+      }
+    },
+    "processed": {
+      "file_count": 227,
+      "xlsx_count": 18,
+      "kinds": {
+        "fl_original": 6,
+        "augmented": 6,
+        "augmented_per_re": 6,
+        "figure": 197,
+        "other": 12
+      }
+    }
+  }
+}

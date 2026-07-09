@@ -8,6 +8,7 @@ wheels/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+*.log
 
 # Virtual environments
 .venv
@@ -22,10 +23,17 @@ env/
 __MACOSX/
 .DS_Store
 
+# Document build artifacts
+*.aux
+*.out
+docs/clip_report.pdf
+
 # Local data and experiment artifacts
 data/**
 !data/
 !data/DATA_LAYOUT.md
+!data/**/
+!data/**/README.md
 !data/manifests/
 !data/manifests/**/manifest.json
 results/**
@@ -52,6 +60,7 @@ models/**
 *.csv
 *.parquet
 *.feather
+!docs/templates/**/*.xlsx
 
 # Keep lockfiles and source metadata
 !uv.lock

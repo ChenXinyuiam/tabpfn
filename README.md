@@ -78,7 +78,7 @@ python -m src.inference --mode fl
 Run exploratory data analysis:
 
 ```bash
-python -m src.data.explore --dir data/processedv2 --verbose
+python -m src.data.explore --dir data/interim/features --verbose
 ```
 
 ## Data And Models
@@ -86,10 +86,10 @@ python -m src.data.explore --dir data/processedv2 --verbose
 Expected local directories are configured in `src/config.py`, including:
 
 - `data/rawdata/`
-- `data/cleaned/`
-- `data/scaled/`
+- `data/interim/cleaned/`
+- `data/interim/scaled/`
+- `data/interim/features/`
 - `data/processed/`
-- `data/processedv2/`
 - `models/`
 - `results/`
 - `outputs/`

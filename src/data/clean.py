@@ -33,7 +33,7 @@ from ..config import (
     D_LEFT_COL,
     D_RIGHT_COL,
 )
-from utils.paths import ensure_dir, iter_excel_files, select_batch_dir
+from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
 
 CENTROID_DISTANCE_COL = "点到重心距离"
 CENTROID_X_COL = "重心坐标X"
@@ -50,6 +50,8 @@ RAW_COLUMN_ALIASES = {
     "到AB垂直距离": D_LEFT_COL,
     "点到AC的垂直距离": D_RIGHT_COL,
     "到AC垂直距离": D_RIGHT_COL,
+    "Fly": "FL",
+    "FLy": "FL",
 }
 
 
@@ -115,7 +117,7 @@ def impute_centroid_distance(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def clean_file(src: os.PathLike, dst: os.PathLike) -> dict:
+def clean_file(src: os.PathLike, dst: os.PathLike, max_abs_fl: float | None = None) -> dict:
     df = pd.read_excel(src, engine="openpyxl")
     df = normalize_columns(df)
     original_shape = df.shape
@@ -143,6 +145,14 @@ def clean_file(src: os.PathLike, dst: os.PathLike) -> dict:
 
     # Step 4: coerce FL to numeric and drop rows with missing/non-numeric FL
     df["FL"] = pd.to_numeric(df["FL"], errors="coerce")
+    n_outlier_fl = 0
+    if max_abs_fl is not None:
+        outlier_mask = df["FL"].abs() > max_abs_fl
+        n_outlier_fl = int(outlier_mask.sum())
+        if n_outlier_fl:
+            df = df[~outlier_mask].reset_index(drop=True)
+            print(f"  -> Dropped {n_outlier_fl} rows with |FL| > {max_abs_fl:g}")
+
     n_missing_fl = df["FL"].isna().sum()
     df = df.dropna(subset=["FL"]).reset_index(drop=True)
     print(f"  -> Dropped {n_missing_fl} rows with missing/non-numeric FL -> {len(df)} rows kept")
@@ -160,12 +170,14 @@ def clean_file(src: os.PathLike, dst: os.PathLike) -> dict:
         "cols_original": original_shape[1],
         "cols_kept": len(df.columns),
         "remaining_null": remaining_null,
+        "rows_dropped_fl_outlier": n_outlier_fl,
     }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Clean one raw-data batch.")
     parser.add_argument("--batch", default=None, help="Batch folder under data/rawdata. Defaults to the latest batch.")
+    parser.add_argument("--max-abs-fl", type=float, default=None, help="Drop rows whose absolute raw FL exceeds this value.")
     args = parser.parse_args()
 
     if not RAW_DIR.exists():
@@ -173,7 +185,7 @@ def main() -> None:
 
     batch_dir = select_batch_dir(RAW_DIR, args.batch)
     batch_name = batch_dir.name if batch_dir != RAW_DIR else ""
-    xlsx_files = iter_excel_files(batch_dir)
+    xlsx_files = iter_excel_files_for_batch(batch_dir)
     if not xlsx_files:
         sys.exit(f"No .xlsx files found in {batch_dir}")
 
@@ -183,11 +195,14 @@ def main() -> None:
     summary_rows = []
     for src in xlsx_files:
         print(f"\n{'='*60}\n{src.name}")
+        relative_parent = src.relative_to(batch_dir).parent
         dst_name = normalized_output_name(src.name)
         if dst_name != src.name:
             print(f"  -> Normalized filename to {dst_name}")
-        stats = clean_file(src, dst_root / dst_name)
+        dst_dir = ensure_dir(dst_root / relative_parent)
+        stats = clean_file(src, dst_dir / dst_name, max_abs_fl=args.max_abs_fl)
         stats["batch"] = batch_name
+        stats["group"] = relative_parent.as_posix()
         summary_rows.append(stats)
 
     print("\n" + "=" * 70)

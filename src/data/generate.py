@@ -1,5 +1,5 @@
 """
-Generate a complete dense (X, Z) grid by 2-D interpolation within each cleaned file.
+Generate a complete dense (X, Z) grid by 2-D interpolation(插值) within each cleaned file.
 
 Root cause of the previous blank-checkerboard heatmaps
 -------------------------------------------------------
@@ -17,6 +17,10 @@ Fixed strategy
   4. For positions that already existed in the original cleaned data, substitute
      the exact original values back — no interpolation error at known points.
   5. Mark each row: generated=False (original) or generated=True (new midpoint).
+
+Input 
+------
+data/processed/
 
 Output
 ------

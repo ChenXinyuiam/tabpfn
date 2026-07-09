@@ -6,8 +6,8 @@ Compute geometric features for each data point:
   - Barycentric coordinates (lambda_A, lambda_B, lambda_C)
   - Normalised barycentric coordinates
 
-Input:  data/scaled/*.xlsx
-Output: data/processedv2/*.xlsx
+Input:  data/interim/scaled/*.xlsx
+Output: data/interim/features/*.xlsx
 
 Usage (run from project root):
     python -m src.data.calculate
@@ -26,7 +26,7 @@ from ..config import (
     D_BASE_COL, D_LEFT_COL, D_RIGHT_COL,
     LEFT_SIDE_COL, RIGHT_SIDE_COL,
 )
-from utils.paths import ensure_dir, iter_excel_files, select_batch_dir
+from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
 
 # Output column names
 AREA_CALC_COL     = "面积_calc"
@@ -132,7 +132,7 @@ def compute_geometry_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Calculate geometry features for one scaled-data batch.")
-    parser.add_argument("--batch", default=None, help="Batch folder under data/scaled. Defaults to the latest batch.")
+    parser.add_argument("--batch", default=None, help="Batch folder under data/interim/scaled. Defaults to the latest batch.")
     args = parser.parse_args()
 
     if not SCALED_DIR.exists():
@@ -141,7 +141,7 @@ def main() -> None:
     batch_dir = select_batch_dir(SCALED_DIR, args.batch)
     batch_name = batch_dir.name if batch_dir != SCALED_DIR else ""
 
-    xlsx_files = iter_excel_files(batch_dir)
+    xlsx_files = iter_excel_files_for_batch(batch_dir)
     if not xlsx_files:
         sys.exit(f"No .xlsx files found in {batch_dir}")
 
@@ -149,8 +149,9 @@ def main() -> None:
     ensure_dir(dst_root)
     print(f"Processing batch {batch_name or '(root)'}: {len(xlsx_files)} file(s) -> {dst_root}/")
     for src in xlsx_files:
-        dst = dst_root / src.name
-        print(f"  {src.name} ...", end=" ", flush=True)
+        relative_path = src.relative_to(batch_dir)
+        dst = ensure_dir(dst_root / relative_path.parent) / src.name
+        print(f"  {relative_path} ...", end=" ", flush=True)
         df = pd.read_excel(src, engine="openpyxl")
         df = compute_geometry_features(df)
         df.to_excel(dst, index=False, engine="openpyxl")
