@@ -97,6 +97,7 @@ def resolve_device(device: str) -> str:
 
 
 def load_batch(raw_dir: Path, max_files: int | None = None) -> pd.DataFrame:
+    '''构造所有文件名称list -> maxfiles筛选文件数量 -> 获得FileMeta,excel转DF -> 找丢失列'''
     paths = [p for p in sorted(raw_dir.glob("*.xlsx")) if not p.name.startswith("~$")]
     if max_files is not None:
         paths = paths[:max_files]

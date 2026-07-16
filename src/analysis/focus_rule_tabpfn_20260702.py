@@ -195,6 +195,47 @@ def build_section_features(df: pd.DataFrame, *, n_layers: int) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def build_data_audit(raw: pd.DataFrame, features: pd.DataFrame, raw_dir: Path) -> tuple[dict[str, object], pd.DataFrame]:
+    raw_by_file = (
+        raw.groupby("source_file", sort=True)
+        .agg(
+            raw_rows=("source_file", "size"),
+            raw_re_count=(RE_COL, "nunique"),
+            raw_experiments=("experiment_id", "nunique"),
+        )
+        .reset_index()
+    )
+    feature_by_file = (
+        features.groupby("source_file", sort=True)
+        .agg(
+            feature_rows_sum=("rows", "sum"),
+            feature_re_count=("re", "nunique"),
+            feature_experiments=("experiment_id", "nunique"),
+        )
+        .reset_index()
+    )
+    by_file = raw_by_file.merge(feature_by_file, on="source_file", how="outer")
+    by_file["row_count_match"] = by_file["raw_rows"].fillna(-1).astype(int) == by_file["feature_rows_sum"].fillna(-1).astype(int)
+    by_file["experiment_count_match"] = by_file["raw_experiments"].fillna(-1).astype(int) == by_file[
+        "feature_experiments"
+    ].fillna(-1).astype(int)
+    by_file["all_match"] = by_file["row_count_match"] & by_file["experiment_count_match"]
+
+    audit = {
+        "raw_dir": str(raw_dir),
+        "raw_dir_resolved": str(raw_dir.resolve()),
+        "raw_files": int(raw["source_file"].nunique()),
+        "raw_rows": int(len(raw)),
+        "raw_experiments": int(raw["experiment_id"].nunique()),
+        "feature_experiments": int(len(features)),
+        "feature_rows_sum": int(features["rows"].sum()),
+        "files_all_match": bool(by_file["all_match"].all()),
+        "missing_source_files_in_features": sorted(set(raw["source_file"]) - set(features["source_file"])),
+        "extra_source_files_in_features": sorted(set(features["source_file"]) - set(raw["source_file"])),
+    }
+    return audit, by_file
+
+
 def apply_rule_labels(
     features: pd.DataFrame,
     *,
@@ -420,6 +461,7 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     raw = load_batch(args.raw_dir)
     features = build_section_features(raw, n_layers=args.n_layers)
+    data_audit, data_audit_by_file = build_data_audit(raw, features, args.raw_dir)
     labeled, threshold = apply_rule_labels(
         features,
         delta_std_norm_threshold=args.delta_std_norm_threshold,
@@ -439,6 +481,8 @@ def main() -> None:
     features.to_csv(args.out_dir / "section_features.csv", index=False, encoding="utf-8-sig")
     labeled.to_csv(args.out_dir / "section_features_with_rule_labels.csv", index=False, encoding="utf-8-sig")
     predictions.to_csv(args.out_dir / "tabpfn_grouped_cv_predictions.csv", index=False, encoding="utf-8-sig")
+    data_audit_by_file.to_csv(args.out_dir / "data_audit_by_file.csv", index=False, encoding="utf-8-sig")
+    (args.out_dir / "data_audit.json").write_text(json.dumps(data_audit, ensure_ascii=False, indent=2), encoding="utf-8")
     label_summary = (
         predictions.groupby("focus_label")
         .agg(
@@ -461,6 +505,7 @@ def main() -> None:
         "min_valid_layers": args.min_valid_layers,
         "model_path": str(args.model_path),
         "device": device,
+        "data_audit": data_audit,
         "metrics": metrics,
     }
     (args.out_dir / "metrics.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -489,6 +534,8 @@ def main() -> None:
         "- section_features_with_rule_labels.csv",
         "- tabpfn_grouped_cv_predictions.csv",
         "- rule_label_summary.csv",
+        "- data_audit.json",
+        "- data_audit_by_file.csv",
         "- metrics.json",
         "- focus_rule_tabpfn_gallery.html",
     ]

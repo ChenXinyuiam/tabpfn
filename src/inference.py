@@ -129,6 +129,7 @@ def predict_focus(data_root: Path, results_dir: Path, use_engineered: bool = Tru
         fd_tr_pred, fd_te_pred = predict_target(
             train_df, test_df, stage1_features, "FD", FD_TRANSFORM, FD_MAX_TIME
         )
+        
         # Stage 1: FL
         fl_tr_pred, fl_te_pred = predict_target(
             train_df, test_df, stage1_features, "FL", FL_TRANSFORM, FL_MAX_TIME

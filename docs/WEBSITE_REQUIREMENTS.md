@@ -1,8 +1,12 @@
-# 三角形截面力场预测网站需求文档
+# 三角形截面力场预测网站需求文档（最终版）
+
+> 版本：v1.0 Final  
+> 定稿日期：2026-07-15  
+> 实现边界：网页演示版使用确定性替代模型；生产版必须在相同 API 契约下接入真实 TabPFN FD/FL 推理服务。任何页面和接口都不得把替代模型标记为真实 TabPFN。
 
 ## 1. 背景与目标
 
-本项目需要在现有 FD/FL 预测能力基础上建设一个可交互网站。网站面向芯片/微流道截面设计场景，用户只输入三条边长，系统自动生成三角形截面、截面内采样点，并预测每个点的惯性升力、迪恩曳力、合力分布，最终分析聚焦状况和聚焦位置。
+本项目需要在现有 FD/FL 预测能力基础上建设一个可交互网站。网站面向芯片/微流道截面设计场景，用户输入三条边长和曲率半径组，系统自动生成三角形截面、截面内采样点，并预测每个点的惯性升力、迪恩曳力、合力分布，最终分析聚焦状况和聚焦位置。
 
 本需求文档中的“迪恩业力”按微流控语境理解为“迪恩曳力 / Dean drag force”。如果后续业务侧坚持使用其他术语，前端显示文案可调整，但内部字段应保持稳定。
 
@@ -11,7 +15,7 @@
 ### 2.1 本期目标
 
 - 提供一个浏览器可访问的网站页面。
-- 用户只需要输入三条三角形边长。
+- 用户输入三条三角形边长和曲率半径组 `R`。
 - 自动校验三角形是否合法。
 - 自动绘制三角形截面图像。
 - 自动生成三角形内部预测点。
@@ -35,19 +39,19 @@
 
 | 角色 | 需求 |
 | --- | --- |
-| 芯片/截面设计人员 | 输入候选三角形边长，快速判断该截面是否可能形成良好聚焦。 |
+| 芯片/截面设计人员 | 输入候选三角形边长和曲率半径组，快速判断该截面是否可能形成良好聚焦。 |
 | 建模/算法人员 | 验证不同三角形几何下的力场预测结果，导出点级数据继续分析。 |
 | 项目展示人员 | 用图像展示三角形截面、力分布和聚焦位置。 |
 
 ## 4. 核心使用流程
 
 1. 用户打开网站。
-2. 用户输入三条边长：`AB`、`AC`、`BC`。
-3. 系统校验三边是否能构成三角形。
+2. 用户输入三条边长 `AB`、`AC`、`BC`，并选择曲率半径组 `R = 10/20/30`。
+3. 系统校验三边是否能构成三角形，并校验曲率半径组是否受当前模型支持。
 4. 系统根据三边计算三角形坐标、面积、周长、高度、角度等几何特征。
 5. 系统在三角形内部生成采样点。
-6. 系统把几何特征和采样点坐标提交给后端预测接口。
-7. 后端返回每个点的 `FL`、`FD`、合力、聚焦分析结果。
+6. 系统把几何特征、曲率半径组和采样点坐标提交给后端预测接口。
+7. 后端按曲率半径组路由 FD 模型，并返回每个点的 `FL`、`FD`、合力、聚焦分析结果。
 8. 前端展示：
    - 三角形截面图；
    - 内部采样点；
@@ -61,13 +65,14 @@
 
 ### 5.1 用户可见输入
 
-本期前端只暴露以下三个必填输入：
+最终版前端暴露以下四个必填输入：
 
 | 字段 | 类型 | 单位 | 说明 |
 | --- | --- | --- | --- |
 | `side_ab` | number | um | A-B 边长 |
 | `side_ac` | number | um | A-C 边长 |
 | `side_bc` | number | um | B-C 边长，默认作为底边 |
+| `radius_group` | enum | 训练数据分组值 | 曲率半径组，当前仅支持 `10`、`20`、`30`；在物理单位尚未由模型元数据确认前，界面显示为 `R = 10/20/30`，不得擅自标注 `um` 或 `mm`。 |
 
 ### 5.2 输入校验
 
@@ -77,7 +82,9 @@
   - `side_ab + side_bc > side_ac`
   - `side_ac + side_bc > side_ab`
 - 边长默认单位为 `um`，后端进入模型前统一转换为 `m`。
+- `radius_group` 必须是当前模型声明支持的枚举值，最终版固定为 `10`、`20`、`30`。
 - 如果输入无法构成三角形，前端应阻止预测，并给出明确错误提示。
+- 如果半径组缺失或不受支持，前端应阻止预测，并提示“请选择受支持的曲率半径组”。
 
 ### 5.3 后端默认参数
 
@@ -87,10 +94,9 @@
 | --- | --- | --- |
 | `re_range` | 使用后端配置的雷诺数范围 | 网站需要对多个 `Re` 分别预测，并汇总该三角形在哪个雷诺数范围内可实现聚焦。 |
 | `point_count` | 200 | 单个三角形、单个 `Re` 下默认生成 200 个采样点。 |
-| `radius_group` | 后端配置或模型默认 | 若 FD 模型依赖半径组，需要后端固定默认值。 |
 | `model_version` | 后端配置 | 标识当前使用的 FL/FD/聚焦模型版本。 |
 
-后续版本可以加入“高级模式”，允许研究人员选择 `Re` 范围、采样点数量、半径组和模型版本，但本期默认隐藏。
+后续版本可以加入“高级模式”，允许研究人员选择 `Re` 范围、采样点数量和模型版本；曲率半径组不是高级参数，必须始终可见。
 
 ## 6. 几何生成需求
 
@@ -170,6 +176,14 @@ z_a = sqrt(side_ab^2 - x_a^2)
 
 本期 `FD` 明确展示为 Dean force。当前项目历史数据中可能仍存在 `dean_velocity_x/y` 之类旧字段名，后端需要在模型封装层完成字段映射，对前端统一输出 Dean force 语义，并通过 `fd_output_mode = force_vector` 返回。
 
+曲率半径是 FD 推理条件，必须满足以下要求：
+
+- 后端接收 `radius_group`，并按 `10/20/30` 选择对应的 FD 模型或模型分支；
+- 禁止在缺少 `radius_group` 时静默使用未声明的默认半径；
+- 同一几何、采样点和 `Re` 在不同曲率半径组下，应进入不同的 FD 推理条件；
+- 生产版若改为把连续曲率半径作为模型特征，必须重新训练、验证并升级 `feature_version`，不能只修改网页字段；
+- 响应必须回显 `radius_group` 和实际模型路由，保证结果可追溯。
+
 - `force_vector`：可作为力矢量展示；
 - `scalar_projection`：单方向投影。
 
@@ -228,7 +242,7 @@ total_force_magnitude = sqrt(total_force_x^2 + total_force_y^2)
 
 ### 8.2 聚焦位置计算
 
-聚焦位置可以由以下方式之一给出：
+聚焦位置由后端声明的 `focus_method` 给出：
 
 - 由专门聚焦模型直接预测；
 - 根据合力大小最小区域推断；
@@ -247,7 +261,7 @@ total_force_magnitude = sqrt(total_force_x^2 + total_force_y^2)
 | `focus_confidence` | 0 到 1 的置信度。 |
 | `focus_reason` | 简短解释，例如“合力低值区集中在截面右上区域”。 |
 
-聚焦判断实现方式暂定。后端接口需要预留 `focus_method` 字段，取值可以是 `classifier_model`、`force_rule` 或 `hybrid`，等模型方案确认后再固定默认实现。
+`focus_method` 不允许返回占位值。生产版优先使用 `classifier_model`；模型不可用时可以明确降级为 `force_rule`，组合方式使用 `hybrid`。当前网页演示版固定返回 `force_rule_demo`，并同时返回 `uses_tabpfn = false`。
 
 ### 8.3 聚焦可视化
 
@@ -265,7 +279,7 @@ total_force_magnitude = sqrt(total_force_x^2 + total_force_y^2)
 
 主页面分为三个区域：
 
-1. 输入区：三条边长输入和预测按钮。
+1. 输入区：三条边长、曲率半径组和预测按钮。
 2. 可视化区：三角形截面、点、力分布和聚焦位置。
 3. 结果区：关键数值、聚焦判断、下载按钮。
 
@@ -279,6 +293,7 @@ total_force_magnitude = sqrt(total_force_x^2 + total_force_y^2)
 - `AC` 输入框；
 - `BC` 输入框；
 - 单位标识 `um`；
+- 曲率半径组 `R` 选择框，选项为 `10/20/30`，默认 `20`；
 - “生成并预测”按钮；
 - 输入错误提示。
 
@@ -303,6 +318,7 @@ total_force_magnitude = sqrt(total_force_x^2 + total_force_y^2)
 - 三角形周长；
 - 高度；
 - 三个角度；
+- 当前曲率半径组；
 - 采样点数量；
 - 聚焦状态；
 - 聚焦坐标；
@@ -325,8 +341,9 @@ POST /api/predict-triangle
 ```json
 {
   "side_ab_um": 690,
-  "side_ac_um": 340,
-  "side_bc_um": 750
+  "side_ac_um": 520,
+  "side_bc_um": 750,
+  "radius_group": 20
 }
 ```
 
@@ -334,62 +351,79 @@ POST /api/predict-triangle
 
 ```json
 {
+  "status": "ok",
   "input": {
     "side_ab_um": 690,
-    "side_ac_um": 340,
-    "side_bc_um": 750
+    "side_ac_um": 520,
+    "side_bc_um": 750,
+    "radius_group": 20
   },
   "geometry": {
-    "vertices_um": {
-      "A": [489.8, 486.5],
-      "B": [0.0, 0.0],
-      "C": [750.0, 0.0]
+    "sides": {"ab": 690, "ac": 520, "bc": 750},
+    "vertices": {
+      "A": {"x": 502.7, "y": 472.5},
+      "B": {"x": 0.0, "y": 0.0},
+      "C": {"x": 750.0, "y": 0.0}
     },
-    "area_um2": 182437.5,
-    "perimeter_um": 1780.0,
-    "height_um": 486.5,
-    "angles_deg": {
-      "A": 84.2,
-      "B": 44.8,
-      "C": 51.0
+    "area": 177187.5,
+    "perimeter": 1960.0,
+    "height": 472.5,
+    "centroid": {"x": 417.6, "y": 157.5},
+    "angles": {"A": 82.8, "B": 43.2, "C": 54.0}
+  },
+  "basePoints": [
+    {"point_id": "p0001", "x": 10.0, "y": 10.0, "xNorm": 0.0133, "yNorm": 0.0212}
+  ],
+  "sweep": [
+    {
+      "re": 36,
+      "focus": {"score": 0.72, "x": 360.0, "y": 210.0, "optRe": 35.8},
+      "points": [
+        {
+          "point_id": "p0001",
+          "re": 36,
+          "x": 10.0,
+          "y": 10.0,
+          "fl_x_pred": 0.004,
+          "fl_y_pred": 0.012,
+          "fl_magnitude_pred": 0.0126,
+          "fd_x_pred": 0.006,
+          "fd_y_pred": -0.002,
+          "fd_magnitude_pred": 0.0063,
+          "total_force_x": 0.010,
+          "total_force_y": 0.010,
+          "total_force_magnitude": 0.0141,
+          "focus_region_flag": 0
+        }
+      ]
     }
+  ],
+  "bestRe": 36,
+  "focus": {
+    "status": "weak_focus",
+    "x": 360.0,
+    "y": 210.0,
+    "reRange": [30, 48],
+    "confidence": 0.72,
+    "method": "classifier_model"
   },
   "prediction_meta": {
+    "engine": "tabpfn-production",
     "model_version": "tabpfn_fd_fl_v1",
+    "feature_version": "triangle-force-features-v2-radius",
+    "radius_group": 20,
+    "fd_model_route": "fd_radius_20",
     "re_range": [6, 60],
     "re_values": [6, 12, 18, 24, 30, 36, 42, 48, 54, 60],
     "point_count_per_re": 200,
     "fl_output_mode": "directional_projection_xy",
-    "fd_output_mode": "force_vector"
-  },
-  "points": [
-    {
-      "point_id": "p0001",
-      "re": 36,
-      "x_um": 10.0,
-      "y_um": 10.0,
-      "fl_x_pred": 0.004,
-      "fl_y_pred": 0.012,
-      "fl_magnitude_pred": 0.0126,
-      "fd_x_pred": 0.006,
-      "fd_y_pred": -0.002,
-      "fd_magnitude_pred": 0.0063,
-      "total_force_x": 0.010,
-      "total_force_y": 0.010,
-      "total_force_magnitude": 0.0141
-    }
-  ],
-  "focus": {
-    "focus_status": "weak_focus",
-    "focus_x_um": 360.0,
-    "focus_y_um": 210.0,
-    "focus_re_range": [30, 48],
-    "focus_confidence": 0.72,
-    "focus_method": "pending",
-    "focus_reason": "合力低值区集中在截面中部偏右区域。"
+    "fd_output_mode": "force_vector",
+    "uses_tabpfn": true
   }
 }
 ```
+
+`geometry`、`basePoints`、`sweep.points` 中的坐标和长度沿用请求边长单位 `um`。网页内部结构使用 `x/y`，下载 CSV 对外使用 `x_um/y_um`。生产后端与演示后端必须保持上述字段层级一致。
 
 ### 10.2 健康检查接口
 
@@ -403,7 +437,9 @@ GET /api/health
 {
   "status": "ok",
   "model_loaded": true,
-  "model_version": "tabpfn_fd_fl_v1"
+  "model_version": "tabpfn_fd_fl_v1",
+  "supported_radius_groups": [10, 20, 30],
+  "uses_tabpfn": true
 }
 ```
 
@@ -413,7 +449,7 @@ GET /api/health
 
 ### 11.1 模型输入特征
 
-后端根据三条边和采样点自动生成模型特征：
+后端根据三条边、曲率半径组和采样点自动生成模型特征，并执行半径路由：
 
 - 边长；
 - 周长；
@@ -424,12 +460,15 @@ GET /api/health
 - 点到三条边的距离；
 - 点到重心的距离；
 - 归一化坐标；
+- 曲率半径组 `radius_group`，用于选择 `10/20/30` 对应的 FD 模型或模型分支；
 - `Re` 范围内的每一个雷诺数；
 - 必要的交互特征。
 
+最终版采用“按半径组路由 FD 模型”的策略。FL 若不依赖曲率半径，可以复用同一 FL 模型；FD 和最终聚焦判断必须保留半径条件。后端必须返回 `fd_model_route`，例如 `fd_radius_20`。若未来采用单个跨半径模型，必须把数值半径加入训练和推理特征并完成重新验证。
+
 ### 11.2 模型输出标准化
 
-无论底层模型使用什么字段名，后端对前端只输出统一字段：
+无论底层模型使用什么字段名，后端对前端只输出统一字段。点级字段位于 `sweep[].points[]`：
 
 - `fl_x_pred`
 - `fl_y_pred`
@@ -440,11 +479,18 @@ GET /api/health
 - `total_force_x`
 - `total_force_y`
 - `total_force_magnitude`
-- `focus_status`
-- `focus_x_um`
-- `focus_y_um`
-- `focus_re_range`
-- `focus_confidence`
+- `focus_region_flag`
+
+整体聚焦字段位于 `focus`：
+
+- `status`
+- `x`
+- `y`
+- `reRange`
+- `confidence`
+- `method`
+
+元数据位于 `prediction_meta`，至少包含 `engine`、`model_version`、`feature_version`、`radius_group`、`fd_model_route`、`uses_tabpfn` 和 `re_values`。
 
 ### 11.3 模型版本记录
 
@@ -453,6 +499,8 @@ GET /api/health
 - 模型版本；
 - 特征版本；
 - 默认参数；
+- 输入和实际使用的曲率半径组；
+- FD 模型路由；
 - 预测时间；
 - 输出物理含义标记。
 
@@ -463,6 +511,7 @@ GET /api/health
 用户可下载点级预测结果，字段包括：
 
 - `point_id`
+- `radius_group`
 - `re`
 - `x_um`
 - `y_um`
@@ -503,6 +552,7 @@ GET /api/health
 | --- | --- |
 | 三边不能构成三角形 | 前端提示“输入边长无法构成三角形”。 |
 | 边长为空或非数字 | 前端提示具体字段错误。 |
+| 曲率半径组缺失或不在 `10/20/30` 中 | 阻止提交并提示选择受支持的半径组；后端返回 HTTP 400。 |
 | 后端模型未加载 | 返回模型不可用错误，前端提示稍后重试。 |
 | 预测结果部分缺失 | 前端展示可用结果，并提示哪些分量不可用。 |
 | 聚焦无法判断 | `focus_status = unknown`，前端显示“暂无法判断”。 |
@@ -511,8 +561,9 @@ GET /api/health
 
 本期网站完成应满足：
 
-- 用户只输入三条边即可完成一次预测。
+- 用户输入三条边和曲率半径组即可完成一次预测。
 - 非法三角形会被阻止提交。
+- 缺失或不受支持的曲率半径组会被阻止提交。
 - 页面能正确绘制三角形和内部采样点。
 - 后端能在配置的 `Re` 范围内返回点级 `FL`、`FD`、合力和聚焦结果。
 - 页面能切换查看 `FL`、`FD`、合力分布。
@@ -521,12 +572,14 @@ GET /api/health
 - 结果可下载为 CSV。
 - 当前图像可下载为 PNG。
 - 响应中包含模型版本和输出物理含义说明。
+- 请求、响应、结果区、CSV 和报告中的 `radius_group` 一致；切换 `R = 10/20/30` 会进入对应 FD 推理条件并产生可区分结果。
+- 响应包含 `fd_model_route` 和真实的 `uses_tabpfn` 状态，演示替代模型不得标记为 TabPFN。
 - Dean 输出在网站语义中明确为 Dean force；若底层模型仍使用旧字段名，必须由后端完成语义映射和说明。
 - 网站需要按服务器部署要求设计，支持多人通过浏览器访问。
 
 ## 16. 后续迭代
 
-- 增加高级参数：`Re` 范围、半径组、采样点数量、模型版本。
+- 增加高级参数：`Re` 范围、采样点数量、模型版本。
 - 支持批量输入多个三角形。
 - 支持对比多个三角形的聚焦结果。
 - 支持导出完整分析报告。
@@ -534,12 +587,15 @@ GET /api/health
 - 支持在线切换不同训练批次或模型。
 - 支持三角形以外的截面形状。
 
-## 17. 已确认与待定问题
+## 17. 最终确认项
 
 1. `Re` 不固定为单值，后端需要在一个雷诺数范围内分别预测，并输出该三角形可实现聚焦的 `Re` 范围。
 2. `FD` 网站侧明确展示为 Dean force。
 3. `FL` 使用单方向投影，x/y 两个方向分别展示。
-4. 聚焦判断方法待定：可以使用专门分类模型，也可以先用合力低值区/收敛规则实现，接口预留 `focus_method`。
+4. `focus_method` 必须返回实际方法：生产版优先 `classifier_model`，允许明确降级为 `force_rule` 或使用 `hybrid`；演示版固定 `force_rule_demo`。
 5. 默认采样点数量为 200。
 6. 前端需要中英文切换，默认中文，可切换英文。
 7. 网站需要部署到服务器，供多人通过浏览器访问。
+8. 曲率半径组是最终版必填参数，前端固定提供 `10/20/30`，默认 `20`；该数值当前按训练数据分组值解释，物理单位须由后续模型元数据明确。
+9. 最终版按曲率半径组路由 FD 模型；接口必须回显 `radius_group` 和 `fd_model_route`。
+10. 当前网页和 Python/Node 演示后端仍是确定性替代模型，必须显示 `uses_tabpfn = false`；真实 TabPFN 接入属于生产部署必备项，不得在演示版中伪装完成。
