@@ -1,126 +1,48 @@
-# Data Pipeline
+# 数据模块
 
-三角形几何 / 流力（FL）数据处理管线。
+## 两类入口
 
-## 数据流
+- `audit.py` / `contracts.py`：显式 manifest、单位、目标来源和几何审核，是新系统的数据入口。
+- `template_schema.py`：标准或历史 FD/FL 列名适配、单位处理及基本校验，供原生位置匹配使用。
 
-```
-原始 Excel (.xlsx)
-  data/rawdata/<batch>/
-       │
-       │  [clean]      列名规范化、删空列/骨架行、
-       │               插补缺失距离、删无效 FL
-       ▼
-  data/cleaned/<batch>/
-       │
-       │  [scale]      面积 ×1e12，其他物理列 ×1e6
-       ▼
-  data/scaled/<batch>/
-       │
-       │  [calculate]  面积_calc、角和、边长、
-       │               重心坐标 (lambda_*)
-       ▼
-  data/processedv2/<batch>/
-       │
-       │  [publish]    FL 文件直接复制，
-       │               sym 文件 FL 取反
-       ▼
-  data/processed/<batch>/
-       │
-       ├── [generate]         ──► {label}_generated.xlsx
-       │                         (所有 Re 共享稠密网格)
-       │
-       └── [generate_per_re]  ──► {label}_generated_per_re.xlsx
-                                  (逐 Re 独立稠密网格)
+不要把“输入是旧中文表”与“代码已过时”混为一谈。以下预处理模块仍被当前管线调用，
+因此保留；标准化数据不需要重复执行每个历史阶段。
+
+## 中文表处理管线
+
+```text
+data/rawdata/<batch>
+  -> clean       -> data/interim/cleaned/<batch>
+  -> scale       -> data/interim/scaled/<batch>
+  -> calculate   -> data/interim/features/<batch>
+  -> publish     -> data/processed/<batch>
+  -> generate / generate_per_re
 ```
 
-## 使用方式
+| 阶段 | 模块 | 作用 |
+| --- | --- | --- |
+| clean | clean.py | 列名规范化、记录与处理无效行 |
+| scale | Feature_scale.py / units.py | 按列判断并归一化长度到 um、面积到 um²；不重复放大已转换数据 |
+| calculate | calculate.py | 按当前输入几何计算派生字段 |
+| publish | stages.py / Reverse_FL.py | 发布 FL；sym 文件反转 FL 符号 |
+| generate | generate.py | 共享 Re 稠密网格 |
+| generate_per_re | generate_per_re.py | 每个 Re 独立插值 |
 
-### 统一入口（推荐）
+这些阶段有各自数据假设，不能在未知源格式上盲目整条执行。
+网格重心坐标审核是 `src/regression/transfer_fd.py` 的实验特征步骤，不会覆盖原始工作簿。
 
-```bash
-# 运行完整管线
-python -m src.data.pipeline run --batch 2026-04-26
+## 命令
 
-# 运行单个阶段
-python -m src.data.pipeline run --stage clean --batch 2026-04-26
-
-# 从指定阶段开始运行到末尾
-python -m src.data.pipeline run --from calculate
-
-# 运行到指定阶段为止
-python -m src.data.pipeline run --until publish
-
-# 查看管线结构
-python -m src.data.pipeline show
-
-# 列出所有阶段
-python -m src.data.pipeline list
+```powershell
+python -m src data show
+python -m src data list
+python -m src data run --batch 2026-04-26 --until publish
+python -m src system audit --help
 ```
 
-### 传统单阶段调用（仍然可用）
+单阶段模块入口仍支持 `python -m src.data.clean` 等命令。
+`fd_data.py`、`fl_data.py` 提供专用处理；`manifest.py` 写批次清单；
+`explore.py` 仅用于探索统计。
 
-```bash
-python -m src.data.clean --batch 2026-04-26
-python -m src.data.Feature_scale --batch 2026-04-26
-python -m src.data.calculate --batch 2026-04-26
-python -m src.data.Reverse_FL --batch 2026-04-26
-python -m src.data.generate --data-dir data/processed/2026-04-26
-python -m src.data.generate_per_re --data-dir data/processed/2026-04-26
-```
-
-### 编程接口
-
-```python
-from src.data import main_pipeline
-
-# 运行完整管线
-main_pipeline.run(batch="2026-04-26")
-
-# 运行到 publish 阶段
-main_pipeline.run(batch="2026-04-26", until="publish")
-
-# 查看 DAG
-print(main_pipeline.show())
-```
-
-## 阶段说明
-
-| 阶段 | 模块 | 输入 | 输出 |
-|------|------|------|------|
-| clean | `clean.py` | `data/rawdata/` | `data/cleaned/` |
-| scale | `Feature_scale.py` | `data/cleaned/` | `data/scaled/` |
-| calculate | `calculate.py` | `data/scaled/` | `data/processedv2/` |
-| publish | (内联) | `data/processedv2/` | `data/processed/` |
-| generate | `generate.py` | `data/processed/` | `data/processed/` |
-| generate_per_re | `generate_per_re.py` | `data/processed/` | `data/processed/` |
-
-### 独立工具
-
-| 模块 | 用途 |
-|------|------|
-| `Repair_base_on_Re.py` | 基于 Re-FL 回归修复异常 FL 值（独立分支） |
-| `explore.py` | 任意阶段 Excel 文件的探索性数据分析 |
-| `manifest.py` | 生成全管线文件清单 JSON |
-
-## 变更说明
-
-本次重构 (2026-05):
-
-### 改动
-- **新增** `pipeline.py` — `PipelineStage` / `Pipeline` 核心编排抽象
-- **新增** `stages.py` — 6 个具体阶段定义，委托给已有模块的核心函数
-- **新增** `README.md` — 本文件
-- **修改** `__init__.py` — 导出 `Pipeline`, `PipelineStage`, `main_pipeline`
-- **修复** `generate.py` — 删除无法运行的死代码 `main()`（引用了未导入的 `os`）
-- **修复** `generate_per_re.py` — 删除过时的死代码 `main()`，移除 `DATA_DIR` 全局变量，签名改为接受 `Path`
-
-### 未改动
-`clean.py`, `Feature_scale.py`, `calculate.py`, `Reverse_FL.py`, `Repair_base_on_Re.py`, `explore.py`, `manifest.py` 一字未改。所有 `python -m src.data.xxx` 独立调用保持可用。
-
-## 回滚
-
-所有修改是增量叠加：
-
-- **删除新文件回退**：`rm src/data/{pipeline,stages,README}.py.md`
-- **恢复被修改文件**：`git checkout -- src/data/{generate,generate_per_re,__init__}.py`
+旧的自动 Re-FL 修复脚本与特定五月批次距离生成脚本已移除。
+不默认把 u=0 改成正数，也不根据测试误差修改标签。详见仓库 docs 中的零值审核报告。

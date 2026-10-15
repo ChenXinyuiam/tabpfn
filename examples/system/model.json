@@ -1,0 +1,8 @@
+{
+  "regression": {"backend": "extra-trees", "seed": 42, "n_estimators": 200, "device": "cpu"},
+  "classifier": {"backend": "extra-trees", "seed": 42, "n_estimators": 200, "device": "cpu"},
+  "seed": 42,
+  "inner_splits": 3,
+  "window_size": 3,
+  "physics": null
+}

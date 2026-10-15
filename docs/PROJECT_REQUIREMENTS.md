@@ -248,17 +248,15 @@ python -m src.data.Reverse_FL --batch <batch>
 训练：
 
 ```bash
-python -m src.train --target FD
-python -m src.train --target FL
-python -m src.train --target both
+python -m src system train --help
 ```
 
 推理 / 评估：
 
 ```bash
-python -m src.inference --mode fd
-python -m src.inference --mode fl
-python -m src.inference --mode focus
+python -m src regression-evaluate --tasks FD FL --protocol both
+python -m src focus-optimize --help
+python -m src system predict --help
 ```
 
 待确认需求：
@@ -309,8 +307,8 @@ D:\2026\tab\FDFLPredictions\data\rawdata\2026-05-25\FD数据\10
 - 用户能明确知道某个数据批次应该放在哪里。
 - 用户可以按文档运行数据 pipeline，不需要手工修改脚本内路径。
 - pipeline 能生成一份字段清楚的模型可用数据。
-- `python -m src.train --target both` 能在批准数据集上成功运行。
-- `python -m src.inference --mode focus` 能在批准数据集上成功运行。
+- `python -m src system train` 能在批准的审核快照和配置上成功运行。
+- `python -m src system evaluate --task cascade` 能在批准的快照、标签及物理配置上成功运行。
 - `results` 下产生 `FD`、`FL` 和聚焦判定指标。
 - 逐点聚焦预测结果被保存。
 - 文档说明哪些字段是输入、哪些字段是生成特征、哪些字段是目标。

@@ -35,17 +35,27 @@ import pandas as pd
 from tabpfn_service import FEATURE_COLUMNS, TARGET_COLUMNS
 
 
-def build_regressor(n_estimators: int, random_state: int, model_path: Path):
+def build_regressor(n_estimators: int, random_state: int, model_path: Path | None):
+    import inspect
+
     from tabpfn import TabPFNRegressor
 
-    return TabPFNRegressor(
-        device="cpu",
-        n_estimators=n_estimators,
-        model_path=model_path,
-        ignore_pretraining_limits=True,
-        random_state=random_state,
-        show_progress_bar=False,
-    )
+    available = inspect.signature(TabPFNRegressor).parameters
+    kwargs: dict[str, object] = {}
+    candidates: dict[str, object] = {
+        "device": "cpu",
+        "n_estimators": n_estimators,
+        "ignore_pretraining_limits": True,
+        "random_state": random_state,
+        "show_progress_bar": False,
+    }
+    if model_path is not None:
+        candidates["model_path"] = model_path
+
+    for key, value in candidates.items():
+        if key in available:
+            kwargs[key] = value
+    return TabPFNRegressor(**kwargs)
 
 
 def fit_preprocessor(x: pd.DataFrame) -> dict[str, list[float]]:
@@ -92,12 +102,10 @@ def train_and_export(
     training_csv: Path,
     output_dir: Path,
     *,
-    model_path: Path,
+    model_path: Path | None,
     n_estimators: int,
     max_rows: int | None,
 ) -> dict[str, object]:
-    if not model_path.exists():
-        raise FileNotFoundError(f"TabPFN model checkpoint not found: {model_path}")
     output_dir.mkdir(parents=True, exist_ok=True)
     df = load_training_data(training_csv, max_rows)
     x = df[FEATURE_COLUMNS]
@@ -140,7 +148,7 @@ def train_and_export(
         "target_columns": TARGET_COLUMNS,
         "n_estimators": n_estimators,
         "max_rows": max_rows,
-        "model_path": model_path.as_posix(),
+        "model_path": model_path.as_posix() if model_path is not None else None,
         "outputs": outputs,
     }
     manifest_path = output_dir / "model_manifest.json"
@@ -152,7 +160,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Train and export TriFocus TabPFN joblib models.")
     parser.add_argument("--training-csv", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, default=Path("models/tabpfn_server"))
-    parser.add_argument("--model-path", type=Path, default=Path("models/offline_tabpfn_2_5/tabpfn-v2.5-regressor-v2.5_default.ckpt"))
+    parser.add_argument("--model-path", type=Path, default=None)
     parser.add_argument("--n-estimators", type=int, default=1)
     parser.add_argument("--max-rows", type=int, default=2000)
     args = parser.parse_args()
@@ -160,7 +168,7 @@ def main() -> None:
     manifest = train_and_export(
         args.training_csv,
         args.output_dir,
-        model_path=args.model_path,
+        model_path=args.model_path if args.model_path and args.model_path.exists() else None,
         n_estimators=args.n_estimators,
         max_rows=args.max_rows,
     )

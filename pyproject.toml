@@ -1,5 +1,5 @@
 [project]
-name = "tabpfn"
+name = "fdf-predictions"
 version = "0.1.0"
 description = "TabPFN prediction project"
 readme = "README.md"
@@ -10,5 +10,34 @@ dependencies = [
     "openpyxl>=3.1.5",
     "pandas>=3.0.2",
     "scikit-learn>=1.8.0",
-    "tabpfn>=7.1.1",
+    "scipy>=1.14",
+    "tabpfn==8.0.3",
+    "torch==2.11.0",
 ]
+
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+fdf = "src.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["src*", "utils*"]
+exclude = ["tests*", "server*"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = ["server_offline_checkpoint", "server_retrain_package"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'win32' or sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

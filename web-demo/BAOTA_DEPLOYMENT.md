@@ -40,7 +40,6 @@ data/
 models/
 outputs/
 results/
-tabpfn-extensions-main/
 .git/
 __pycache__/
 *.log

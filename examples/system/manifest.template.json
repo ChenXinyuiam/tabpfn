@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "classes": ["UF", "F", "WF"],
+  "sources": [
+    {
+      "path": "REPLACE_WITH_SOURCE.csv",
+      "task": "FD",
+      "experiment_id": "REPLACE_WITH_SHARED_EXPERIMENT_ID",
+      "coordinate_frame": "global_xz",
+      "geometry": {"unit": "um", "vertices": [[50, 70], [0, 0], [100, 0]]},
+      "length_unit": "um",
+      "radius_unit": "um",
+      "radius": 1200,
+      "columns": {"x": "x", "z": "z", "re": "re"},
+      "value_origin": "simulated",
+      "target": {"column": "u", "name": "FD_u", "quantity": "unverified", "unit": "native", "component": "unverified"}
+    }
+  ],
+  "labels": [],
+  "label_provenance": ""
+}

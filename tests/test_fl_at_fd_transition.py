@@ -4,18 +4,19 @@ import numpy as np
 import pandas as pd
 
 from src.data.template_schema import standardize_template_frame
-from src.experiments.predict_fl_at_fd_points_tabpfn import augment_fl_points, select_model_features
-from src.experiments.predict_fd_u_from_interpolated_fl_tabpfn import (
-    discover_pairs,
+from src.regression.fd_from_fl import (
     family_key,
     map_augmented_fl_to_fd,
     radius_from_key,
 )
-from src.experiments.predict_fl_positions_from_matching_fd_tabpfn import (
+from src.regression.fd_to_fl import (
     select_features as select_fd_to_fl_features,
+)
+from src.regression.fd_to_fl import (
     valid_rows,
 )
-from src.experiments.interpolate_predicted_fl_files import interpolate_u_pred
+from src.regression.fl_at_fd import augment_fl_points, select_model_features
+from src.regression.interpolation import interpolate_u_pred
 
 
 class TemplateTransitionTest(unittest.TestCase):

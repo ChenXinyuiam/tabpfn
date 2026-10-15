@@ -17,7 +17,7 @@ FD/750-320-10-FD-结果.xlsx -> FL/750-320-10-FL.xlsx
 运行命令：
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.experiments.predict_fl_positions_from_matching_fd_tabpfn `
+.\.venv\Scripts\python.exe -m src fd-to-fl `
   --batch-dir data\rawdata\2026-06-20 `
   --output-dir results\fd_to_matching_fl_2026-06-20 `
   --n-estimators 1 `

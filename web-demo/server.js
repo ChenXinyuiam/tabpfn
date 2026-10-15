@@ -6,7 +6,7 @@ const path = require("path");
 const { performance } = require("perf_hooks");
 
 const RE_VALUES = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
-const POINT_COUNT = 200;
+const POINT_COUNT = 400;
 const RADIUS_GROUPS = [10, 20, 30];
 const MODEL_VERSION = "demo-node-backend-v2-radius";
 const FEATURE_VERSION = "triangle-force-features-v2-radius";

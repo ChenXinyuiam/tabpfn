@@ -11,7 +11,7 @@
 运行示例：
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.experiments.predict_fl_at_fd_points_tabpfn `
+.\.venv\Scripts\python.exe -m src fl-at-fd `
   --fl path\to\FL数据.xlsx `
   --fd path\to\迪恩速度数据.xlsx `
   --output-dir results\fl_at_fd_points_tabpfn

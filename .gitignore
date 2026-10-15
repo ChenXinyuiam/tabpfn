@@ -8,6 +8,7 @@ wheels/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.cache/
 *.log
 
 # Virtual environments
@@ -18,6 +19,21 @@ env/
 # IDE
 .idea/
 .vscode/
+
+# Local agent state and credentials
+/.agents/
+/.claude/
+/.codex/
+/.codex-remote/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local deployment snapshots; maintained service source is in web-demo/
+/server_offline_checkpoint/
+/server_retrain_package/
 
 # macOS metadata
 __MACOSX/
@@ -42,6 +58,8 @@ dataAnalysis/**
 models/**
 
 # Large binaries and model artifacts
+# Retired extension tree retains local checkpoint/cache assets, not source.
+/tabpfn-extensions-main/
 *.ckpt
 *.pkl
 *.pt

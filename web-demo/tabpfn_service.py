@@ -19,21 +19,28 @@ uses_tabpfn=false. It is useful while the server model files are being prepared.
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
+import hashlib
 import json
 import math
 import os
+import threading
 import time
+import uuid
+from collections import OrderedDict
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-
 RE_VALUES = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60]
-POINT_COUNT = 200
+POINT_COUNT = 400
 MODEL_VERSION = "tabpfn-cpu-service-v1"
 FEATURE_VERSION = "triangle-tabpfn-features-v1"
+REFERENCE_CURVATURE_RADIUS_UM = 1200.0
+MIN_CURVATURE_RADIUS_UM = 300.0
+MAX_CURVATURE_RADIUS_UM = 5000.0
 
 FEATURE_COLUMNS = [
     "re",
@@ -86,6 +93,15 @@ def validate_sides(ab: float, ac: float, bc: float) -> None:
         raise ValueError("side lengths cannot form a triangle")
 
 
+def validate_curvature_radius(value: float) -> None:
+    if not math.isfinite(value) or value < MIN_CURVATURE_RADIUS_UM or value > MAX_CURVATURE_RADIUS_UM:
+        raise ValueError("curvature radius must be between 300 and 5000 um")
+
+
+def dean_curvature_factor(curvature_radius_um: float) -> float:
+    return clamp(REFERENCE_CURVATURE_RADIUS_UM / curvature_radius_um, 0.35, 2.35)
+
+
 def build_geometry(ab: float, ac: float, bc: float) -> dict[str, Any]:
     x_a = (ab * ab + bc * bc - ac * ac) / (2 * bc)
     y_a = math.sqrt(max(0.0, ab * ab - x_a * x_a))
@@ -127,6 +143,45 @@ def point_line_distance(point: dict[str, float], a: dict[str, float], b: dict[st
     return numerator / math.hypot(dx, dy)
 
 
+def build_point(
+    geometry: dict[str, Any],
+    *,
+    point_id: str,
+    x: float,
+    y: float,
+) -> dict[str, Any]:
+    vertices = geometry["vertices"]
+    a = vertices["A"]
+    b = vertices["B"]
+    c = vertices["C"]
+    point = {
+        "point_id": point_id,
+        "x": x,
+        "y": y,
+        "x_um": x,
+        "z_um": y,
+    }
+    point["distBase"] = point_line_distance(point, b, c)
+    point["distLeft"] = point_line_distance(point, a, b)
+    point["distRight"] = point_line_distance(point, a, c)
+    point["distCentroid"] = math.hypot(x - geometry["centroid"]["x"], y - geometry["centroid"]["y"])
+    point["xNorm"] = safe_div(x, geometry["sides"]["bc"])
+    point["yNorm"] = safe_div(y, geometry["height"])
+    return point
+
+
+def point_is_inside_triangle(x: float, y: float, geometry: dict[str, Any]) -> bool:
+    a = geometry["vertices"]["A"]
+    b = geometry["vertices"]["B"]
+    c = geometry["vertices"]["C"]
+    denominator = (b["y"] - c["y"]) * (a["x"] - c["x"]) + (c["x"] - b["x"]) * (a["y"] - c["y"])
+    weight_a = ((b["y"] - c["y"]) * (x - c["x"]) + (c["x"] - b["x"]) * (y - c["y"])) / denominator
+    weight_b = ((c["y"] - a["y"]) * (x - c["x"]) + (a["x"] - c["x"]) * (y - c["y"])) / denominator
+    weight_c = 1.0 - weight_a - weight_b
+    tolerance = 1e-9
+    return weight_a >= -tolerance and weight_b >= -tolerance and weight_c >= -tolerance
+
+
 def generate_points(geometry: dict[str, Any]) -> list[dict[str, Any]]:
     vertices = geometry["vertices"]
     a = vertices["A"]
@@ -143,19 +198,44 @@ def generate_points(geometry: dict[str, Any]) -> list[dict[str, Any]]:
 
         x = b["x"] + u * (c["x"] - b["x"]) + v * (a["x"] - b["x"])
         y = b["y"] + u * (c["y"] - b["y"]) + v * (a["y"] - b["y"])
-        point = {"point_id": f"p{i:04d}", "x": x, "y": y}
-        point["distBase"] = point_line_distance(point, b, c)
-        point["distLeft"] = point_line_distance(point, a, b)
-        point["distRight"] = point_line_distance(point, a, c)
-        point["distCentroid"] = math.hypot(x - geometry["centroid"]["x"], y - geometry["centroid"]["y"])
-        point["xNorm"] = safe_div(x, geometry["sides"]["bc"])
-        point["yNorm"] = safe_div(y, geometry["height"])
-        points.append(point)
+        points.append(build_point(geometry, point_id=f"p{i:04d}", x=x, y=y))
 
     return points
 
 
-def focus_model(geometry: dict[str, Any], re_value: int) -> dict[str, float]:
+def resolve_points(payload: dict[str, Any], geometry: dict[str, Any]) -> tuple[list[dict[str, Any]], str]:
+    raw_positions = payload.get("positions")
+    if raw_positions is None:
+        return generate_points(geometry), "halton_sampled_positions"
+    if not isinstance(raw_positions, list) or not raw_positions:
+        raise ValueError("positions must be a non-empty list when provided")
+    if len(raw_positions) > 10000:
+        raise ValueError("positions cannot contain more than 10000 points")
+
+    points: list[dict[str, Any]] = []
+    point_ids = set()
+    for index, raw in enumerate(raw_positions, start=1):
+        if not isinstance(raw, dict):
+            raise ValueError(f"positions[{index - 1}] must be an object")
+        x_value = raw.get("x_um", raw.get("x"))
+        z_value = raw.get("z_um", raw.get("z", raw.get("y_um", raw.get("y"))))
+        if x_value is None or z_value is None:
+            raise ValueError(f"positions[{index - 1}] must contain x_um and z_um")
+        x = float(x_value)
+        y = float(z_value)
+        if not math.isfinite(x) or not math.isfinite(y):
+            raise ValueError(f"positions[{index - 1}] contains a non-finite coordinate")
+        if not point_is_inside_triangle(x, y, geometry):
+            raise ValueError(f"positions[{index - 1}] is outside the triangle")
+        point_id = str(raw.get("point_id", f"p{index:04d}"))
+        if not point_id.strip() or point_id in point_ids:
+            raise ValueError("point_id values must be nonempty and unique")
+        point_ids.add(point_id)
+        points.append(build_point(geometry, point_id=point_id, x=x, y=y))
+    return points, "provided_positions"
+
+
+def focus_model(geometry: dict[str, Any], re_value: int, curvature_radius_um: float = REFERENCE_CURVATURE_RADIUS_UM) -> dict[str, float]:
     sides = geometry["sides"]
     ab = sides["ab"]
     ac = sides["ac"]
@@ -164,12 +244,14 @@ def focus_model(geometry: dict[str, Any], re_value: int) -> dict[str, float]:
     symmetry = 1 - min(abs(ab - ac) / max(ab, ac), 0.95)
     aspect_score = math.exp(-(((aspect - 1.45) / 0.68) ** 2))
     geometry_score = clamp(0.22 + 0.52 * symmetry + 0.32 * aspect_score, 0.16, 0.98)
-    opt_re = clamp(31 + (aspect - 1.25) * 12 + (1 - symmetry) * 10, 18, 52)
+    dean_gain = dean_curvature_factor(curvature_radius_um)
+    opt_re = clamp(31 + (aspect - 1.25) * 12 + (1 - symmetry) * 10 + (dean_gain - 1) * 7.5, 18, 56)
     re_score = math.exp(-(((re_value - opt_re) / 16) ** 2))
-    score = clamp(geometry_score * (0.18 + 0.88 * re_score), 0.03, 0.98)
+    radius_score = clamp(0.9 + 0.1 * dean_gain, 0.78, 1.14)
+    score = clamp(geometry_score * radius_score * (0.18 + 0.88 * re_score), 0.03, 0.98)
     skew = (ab - ac) / (ab + ac)
     fx = clamp(
-        geometry["centroid"]["x"] + (re_value - 36) * 0.0035 * bc - skew * 0.09 * bc,
+        geometry["centroid"]["x"] + (re_value - 36) * 0.0035 * bc - skew * 0.09 * bc + (dean_gain - 1) * 0.035 * bc,
         min(geometry["vertices"]["A"]["x"], 0, bc) + bc * 0.12,
         max(geometry["vertices"]["A"]["x"], 0, bc) - bc * 0.10,
     )
@@ -183,8 +265,8 @@ def focus_model(geometry: dict[str, Any], re_value: int) -> dict[str, float]:
     return {"score": score, "x": fx, "y": fy, "optRe": opt_re, "geometryScore": geometry_score}
 
 
-def deterministic_force(point: dict[str, Any], geometry: dict[str, Any], re_value: int) -> dict[str, float]:
-    focus = focus_model(geometry, re_value)
+def deterministic_force(point: dict[str, Any], geometry: dict[str, Any], re_value: int, curvature_radius_um: float = REFERENCE_CURVATURE_RADIUS_UM) -> dict[str, float]:
+    focus = focus_model(geometry, re_value, curvature_radius_um)
     scale = max(geometry["sides"]["bc"], geometry["height"])
     re_factor = re_value / 60
     skew = (geometry["sides"]["ab"] - geometry["sides"]["ac"]) / (geometry["sides"]["ab"] + geometry["sides"]["ac"])
@@ -202,8 +284,9 @@ def deterministic_force(point: dict[str, Any], geometry: dict[str, Any], re_valu
     fl_mix = 0.57 + 0.07 * math.sin(re_value / 12)
     fl_x = total_base_x * fl_mix + 0.0036 * wall_bias + 0.001 * skew
     fl_y = total_base_y * fl_mix - 0.0028 * vertical_bias + 0.0012 * math.sin(math.pi * point["xNorm"])
-    fd_x = total_base_x - fl_x
-    fd_y = total_base_y - fl_y
+    dean_factor = dean_curvature_factor(curvature_radius_um)
+    fd_x = (total_base_x - fl_x) * dean_factor
+    fd_y = (total_base_y - fl_y) * dean_factor
     return {"fl_x": fl_x, "fl_y": fl_y, "fd_x": fd_x, "fd_y": fd_y}
 
 
@@ -247,10 +330,21 @@ class ModelManager:
         self.error: str | None = None
         self.models: dict[str, Any] = {}
         self.preprocessor: Any = None
+        self.revision = uuid.uuid4().hex
+        self.lock = threading.RLock()
+        self.uses_tabpfn = False
 
     def load(self) -> None:
+        with self.lock:
+            self._load()
+
+    def _load(self) -> None:
         self.ready = False
         self.error = None
+        self.models = {}
+        self.preprocessor = None
+        self.uses_tabpfn = False
+        self.revision = uuid.uuid4().hex
         requested = os.environ.get("TRIFOCUS_MODEL_MODE", "auto").strip().lower()
         try:
             if requested in {"auto", "joblib"} and self._joblib_paths_available():
@@ -262,6 +356,8 @@ class ModelManager:
             self.mode = "fallback"
             self.error = "No TabPFN model configuration found. Set TRIFOCUS_TRAINING_CSV or four TRIFOCUS_*_MODEL paths."
         except Exception as exc:  # pragma: no cover - deployment diagnostics
+            self.models = {}
+            self.preprocessor = None
             self.mode = "fallback"
             self.error = f"{type(exc).__name__}: {exc}"
 
@@ -269,6 +365,8 @@ class ModelManager:
         return all(os.environ.get(name) for name in ["TRIFOCUS_FLX_MODEL", "TRIFOCUS_FLY_MODEL", "TRIFOCUS_FDX_MODEL", "TRIFOCUS_FDY_MODEL"])
 
     def _load_joblib_models(self) -> None:
+        import pathlib
+
         import joblib
 
         paths = {
@@ -280,7 +378,17 @@ class ModelManager:
         missing = [str(path) for path in paths.values() if not path.exists()]
         if missing:
             raise FileNotFoundError("Missing joblib model files: " + ", ".join(missing))
+        if os.name != "nt":
+            # Models trained on Windows can contain pathlib.WindowsPath objects.
+            # Linux cannot instantiate those during pickle/joblib loading.
+            pathlib.WindowsPath = pathlib.PosixPath  # type: ignore[attr-defined, assignment]
         self.models = {key: joblib.load(path) for key, path in paths.items()}
+        self.uses_tabpfn = any(
+            isinstance(model, dict) and model.get("kind") == "tabpfn_regressor_bundle"
+            or "tabpfn" in type(model).__module__.lower()
+            or any("tabpfn" in type(step).__module__.lower() for step in getattr(model, "named_steps", {}).values())
+            for model in self.models.values()
+        )
         self.mode = "joblib"
         self.ready = True
 
@@ -322,9 +430,14 @@ class ModelManager:
             model.fit(x_train, numeric[target_column].to_numpy(dtype=float))
             self.models[key] = model
         self.mode = "training_csv"
+        self.uses_tabpfn = True
         self.ready = True
 
     def predict(self, rows: list[dict[str, float]]) -> dict[str, list[float]]:
+        with self.lock:
+            return self._predict_rows(rows)
+
+    def _predict_rows(self, rows: list[dict[str, float]]) -> dict[str, list[float]]:
         if not self.ready:
             raise RuntimeError(self.error or "TabPFN model is not ready")
 
@@ -332,12 +445,14 @@ class ModelManager:
         import pandas as pd
 
         frame = pd.DataFrame(rows, columns=FEATURE_COLUMNS)
+        if frame.empty or not np.isfinite(frame.to_numpy(dtype=float)).all():
+            raise ValueError("Prediction feature rows must be nonempty and finite")
         predictions: dict[str, list[float]] = {}
         if self.mode == "training_csv":
             x_pred = self.preprocessor.transform(frame)
             for key, model in self.models.items():
                 predictions[key] = np.asarray(model.predict(x_pred), dtype=float).tolist()
-            return predictions
+            return checked_model_predictions(predictions, len(frame))
 
         if self.mode == "joblib":
             for key, model in self.models.items():
@@ -351,7 +466,7 @@ class ModelManager:
                     except Exception:
                         pred = model.predict(frame.to_numpy(dtype=float))
                 predictions[key] = np.asarray(pred, dtype=float).tolist()
-            return predictions
+            return checked_model_predictions(predictions, len(frame))
 
         raise RuntimeError(f"Unsupported model mode: {self.mode}")
 
@@ -366,66 +481,121 @@ class ModelManager:
         span = np.asarray(preprocessor["span"], dtype=float)
         filled = np.where(np.isfinite(values), values, medians)
         transformed = (filled - min_values) / span
+        if not np.isfinite(transformed).all():
+            raise ValueError("Invalid stored preprocessing values")
         chunk_size = int(os.environ.get("TRIFOCUS_PREDICT_CHUNK_SIZE", "256"))
-        chunks = [
-            transformed[index:index + chunk_size]
-            for index in range(0, len(transformed), chunk_size)
-        ]
-        return np.concatenate([bundle["model"].predict(chunk) for chunk in chunks])
+        if chunk_size < 1:
+            raise ValueError("TRIFOCUS_PREDICT_CHUNK_SIZE must be positive")
+        result = np.empty(len(transformed), dtype=float)
+        for start in range(0, len(transformed), chunk_size):
+            chunk = transformed[start:start + chunk_size]
+            values = np.asarray(bundle["model"].predict(chunk), dtype=float)
+            if values.shape != (len(chunk),) or not np.isfinite(values).all():
+                raise ValueError("Model returned invalid prediction rows")
+            result[start:start + len(chunk)] = values
+        return result
 
     def health(self) -> dict[str, Any]:
         return {
             "ready": self.ready,
             "mode": self.mode,
-            "uses_tabpfn": self.ready,
+            "uses_tabpfn": self.ready and self.uses_tabpfn,
+            "model_revision": self.revision,
             "error": self.error,
         }
 
 
 MODEL_MANAGER = ModelManager()
-PREDICTION_CACHE: dict[str, dict[str, Any]] = {}
+PREDICTION_CACHE: OrderedDict[str, dict[str, Any]] = OrderedDict()
+CACHE_LOCK = threading.RLock()
+
+
+def checked_model_predictions(predictions, row_count):
+    import numpy as np
+
+    result = {}
+    for key in TARGET_COLUMNS:
+        if key not in predictions:
+            raise ValueError(f"Model output missing {key}")
+        values = np.asarray(predictions[key], dtype=float)
+        if values.shape != (row_count,) or not np.isfinite(values).all():
+            raise ValueError(f"Model output {key} must have {row_count} finite values")
+        result[key] = values.tolist()
+    return result
 
 
 def predict_triangle(payload: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Prediction request must be a JSON object")
     started_at = time.perf_counter()
+    cache_capacity = int(os.environ.get("TRIFOCUS_CACHE_MAX_ENTRIES", "8"))
+    if cache_capacity < 0:
+        raise ValueError("TRIFOCUS_CACHE_MAX_ENTRIES must be nonnegative")
+    cache_enabled = os.environ.get("TRIFOCUS_CACHE", "1") == "1" and cache_capacity > 0
+    require_model = payload.get("require_model", False)
+    if not isinstance(require_model, bool):
+        raise ValueError("require_model must be boolean")
+    if require_model and not MODEL_MANAGER.ready:
+        raise RuntimeError(MODEL_MANAGER.error or "Model required but unavailable")
     ab = float(payload.get("side_ab_um", payload.get("sideAB", 0)))
     ac = float(payload.get("side_ac_um", payload.get("sideAC", 0)))
     bc = float(payload.get("side_bc_um", payload.get("sideBC", 0)))
+    curvature_radius_um = float(
+        payload.get(
+            "curvature_radius_um",
+            payload.get("curvatureRadius", payload.get("radius_um", REFERENCE_CURVATURE_RADIUS_UM)),
+        )
+    )
     validate_sides(ab, ac, bc)
+    validate_curvature_radius(curvature_radius_um)
 
-    cache_key = f"{ab:.6f}|{ac:.6f}|{bc:.6f}|{MODEL_MANAGER.mode}|{MODEL_MANAGER.ready}"
-    if os.environ.get("TRIFOCUS_CACHE", "1") == "1" and cache_key in PREDICTION_CACHE:
-        cached = json.loads(json.dumps(PREDICTION_CACHE[cache_key]))
+    geometry = build_geometry(ab, ac, bc)
+    base_points, position_source = resolve_points(payload, geometry)
+    point_signature = json.dumps(
+        [(point["point_id"], point["x"], point["y"]) for point in base_points],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    points_hash = hashlib.sha256(point_signature.encode("utf-8")).hexdigest()
+    cache_key = json.dumps([ab, ac, bc, curvature_radius_um, points_hash, position_source, MODEL_MANAGER.mode, MODEL_MANAGER.ready, MODEL_MANAGER.revision, require_model])
+    with CACHE_LOCK:
+        while len(PREDICTION_CACHE) > cache_capacity:
+            PREDICTION_CACHE.popitem(last=False)
+        cached = copy.deepcopy(PREDICTION_CACHE.get(cache_key)) if cache_enabled else None
+        if cached is not None:
+            PREDICTION_CACHE.move_to_end(cache_key)
+    if cached is not None:
         cached["prediction_meta"]["cache_hit"] = True
         cached["prediction_meta"]["inference_latency_ms"] = round((time.perf_counter() - started_at) * 1000, 2)
         return cached
 
-    geometry = build_geometry(ab, ac, bc)
-    base_points = generate_points(geometry)
     feature_rows = build_feature_rows(geometry, base_points)
     model_predictions: dict[str, list[float]] | None = None
     uses_tabpfn = False
     model_error = None
     if MODEL_MANAGER.ready:
         try:
-            model_predictions = MODEL_MANAGER.predict(feature_rows)
-            uses_tabpfn = True
+            model_predictions = checked_model_predictions(MODEL_MANAGER.predict(feature_rows), len(feature_rows))
+            uses_tabpfn = MODEL_MANAGER.uses_tabpfn
         except Exception as exc:  # pragma: no cover - defensive service mode
+            if require_model:
+                raise RuntimeError(f"Model inference failed: {exc}") from exc
             model_error = f"{type(exc).__name__}: {exc}"
 
     sweep = []
     row_index = 0
+    dean_factor = dean_curvature_factor(curvature_radius_um)
     for re_value in RE_VALUES:
-        focus = focus_model(geometry, re_value)
+        focus = focus_model(geometry, re_value, curvature_radius_um)
         points = []
         for point in base_points:
             if model_predictions is not None:
                 fl_x = model_predictions["fl_x"][row_index]
                 fl_y = model_predictions["fl_y"][row_index]
-                fd_x = model_predictions["fd_x"][row_index]
-                fd_y = model_predictions["fd_y"][row_index]
+                fd_x = model_predictions["fd_x"][row_index] * dean_factor
+                fd_y = model_predictions["fd_y"][row_index] * dean_factor
             else:
-                force = deterministic_force(point, geometry, re_value)
+                force = deterministic_force(point, geometry, re_value, curvature_radius_um)
                 fl_x = force["fl_x"]
                 fl_y = force["fl_y"]
                 fd_x = force["fd_x"]
@@ -444,6 +614,12 @@ def predict_triangle(payload: dict[str, Any]) -> dict[str, Any]:
                     "fd_x_pred": fd_x,
                     "fd_y_pred": fd_y,
                     "fd_magnitude_pred": math.hypot(fd_x, fd_y),
+                    "fl_pred": fl_x,
+                    "fd_pred": fd_x,
+                    "fnet_pred": total_x,
+                    "fnet_x": total_x,
+                    "fnet_z": total_y,
+                    "fnet_magnitude": math.hypot(total_x, total_y),
                     "total_force_x": total_x,
                     "total_force_y": total_y,
                     "total_force_magnitude": math.hypot(total_x, total_y),
@@ -463,7 +639,14 @@ def predict_triangle(payload: dict[str, Any]) -> dict[str, Any]:
 
     result = {
         "status": "ok",
-        "input": {"side_ab_um": ab, "side_ac_um": ac, "side_bc_um": bc},
+        "input": {
+            "side_ab_um": ab,
+            "side_ac_um": ac,
+            "side_bc_um": bc,
+            "curvature_radius_um": curvature_radius_um,
+            "positions_supplied": position_source == "provided_positions",
+            "point_count": len(base_points),
+        },
         "geometry": geometry,
         "basePoints": base_points,
         "sweep": sweep,
@@ -474,28 +657,51 @@ def predict_triangle(payload: dict[str, Any]) -> dict[str, Any]:
             "x": best["focus"]["x"],
             "y": best["focus"]["y"],
             "reRange": [focused_re[0], focused_re[-1]] if focused_re else None,
-            "method": "tabpfn_force_field" if uses_tabpfn else "fallback_force_rule",
+            "method": "heuristic_focus_rule",
+            "confidence_is_probability": False,
         },
         "prediction_meta": {
-            "engine": "python-tabpfn-cpu-service" if uses_tabpfn else "python-tabpfn-service-fallback",
+            "engine": "python-tabpfn-cpu-service" if uses_tabpfn else "python-regression-service" if model_predictions is not None else "python-tabpfn-service-fallback",
             "model_version": MODEL_VERSION,
             "feature_version": FEATURE_VERSION,
             "model_mode": MODEL_MANAGER.mode,
-            "point_count_per_re": POINT_COUNT,
+            "point_count_per_re": len(base_points),
+            "default_point_count_per_re": POINT_COUNT,
             "generated_rows": len(feature_rows),
             "re_values": RE_VALUES,
             "feature_columns": FEATURE_COLUMNS,
             "inference_latency_ms": latency_ms,
-            "data_source": "generated_from_three_side_lengths",
-            "fl_output_mode": "directional_projection_xy",
-            "fd_output_mode": "force_vector",
+            "data_source": position_source,
+            "curvature_radius_um": curvature_radius_um,
+            "reference_curvature_radius_um": REFERENCE_CURVATURE_RADIUS_UM,
+            "dean_curvature_factor": dean_factor,
+            "fd_model_route": "native_target_with_heuristic_radius_correction",
+            "fl_output_mode": "native_projection_with_unverified_transverse_component",
+            "fd_output_mode": "native_u_with_unverified_curvature_correction",
+            "fnet_definition": "fnet_pred = fl_pred + fd_pred; vector magnitude = hypot(fnet_x, fnet_z)",
             "uses_tabpfn": uses_tabpfn,
+            "uses_model": model_predictions is not None,
+            "model_revision": MODEL_MANAGER.revision,
+            "physical_units_verified": False,
+            "fnet_physically_validated": False,
+            "radius_is_model_feature": False,
+            "curvature_correction_method": "heuristic_clipped_reference_radius_ratio",
+            "focus_is_learned_prediction": False,
+            "warnings": [
+                "FD training target u has unverified physical units; FD+FL is a legacy arithmetic output, not a validated force sum.",
+                "Zero transverse components may be placeholders, not learned vector components.",
+                "Radius correction and focus status are heuristic, not learned or calibrated model predictions.",
+            ],
             "model_error": model_error or MODEL_MANAGER.error,
             "cache_hit": False,
         },
     }
-    if os.environ.get("TRIFOCUS_CACHE", "1") == "1":
-        PREDICTION_CACHE[cache_key] = json.loads(json.dumps(result))
+    if cache_enabled and model_error is None:
+        with CACHE_LOCK:
+            PREDICTION_CACHE[cache_key] = copy.deepcopy(result)
+            PREDICTION_CACHE.move_to_end(cache_key)
+            while len(PREDICTION_CACHE) > cache_capacity:
+                PREDICTION_CACHE.popitem(last=False)
     return result
 
 
@@ -526,6 +732,11 @@ class Handler(BaseHTTPRequestHandler):
                     "model": MODEL_MANAGER.health(),
                     "point_count_per_re": POINT_COUNT,
                     "re_values": RE_VALUES,
+                    "curvature_radius_um": {
+                        "min": MIN_CURVATURE_RADIUS_UM,
+                        "max": MAX_CURVATURE_RADIUS_UM,
+                        "reference": REFERENCE_CURVATURE_RADIUS_UM,
+                    },
                 },
             )
             return
@@ -539,9 +750,17 @@ class Handler(BaseHTTPRequestHandler):
                     "target_columns": TARGET_COLUMNS,
                     "prediction_contract": {
                         "point_count_per_re": POINT_COUNT,
+                        "supports_provided_positions": True,
+                        "position_columns": ["x_um", "z_um"],
                         "re_values": RE_VALUES,
                         "generated_rows_per_request": POINT_COUNT * len(RE_VALUES),
-                        "uses_tabpfn": MODEL_MANAGER.ready,
+                        "curvature_radius_um": {
+                            "min": MIN_CURVATURE_RADIUS_UM,
+                            "max": MAX_CURVATURE_RADIUS_UM,
+                            "reference": REFERENCE_CURVATURE_RADIUS_UM,
+                            "effect": "Dean force is corrected by reference_radius / curvature_radius.",
+                        },
+                        "uses_tabpfn": MODEL_MANAGER.ready and MODEL_MANAGER.uses_tabpfn,
                         "model_mode": MODEL_MANAGER.mode,
                     },
                 },
@@ -581,6 +800,9 @@ def main() -> None:
     parser.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"))
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8100")))
     parser.add_argument("--write-training-template", type=Path, default=None)
+    parser.add_argument("--model-dir", type=Path, default=None, help="Directory containing fl_x/fl_y/fd_x/fd_y.joblib")
+    parser.add_argument("--predict-json", type=Path, default=None, help="Run one prediction from a JSON request and exit")
+    parser.add_argument("--output-json", type=Path, default=Path("results/triangle_force_prediction.json"))
     args = parser.parse_args()
 
     if args.write_training_template:
@@ -588,10 +810,41 @@ def main() -> None:
         print(f"Wrote template: {args.write_training_template}")
         return
 
+    if args.model_dir is not None:
+        model_env = {
+            "TRIFOCUS_FLX_MODEL": "fl_x.joblib",
+            "TRIFOCUS_FLY_MODEL": "fl_y.joblib",
+            "TRIFOCUS_FDX_MODEL": "fd_x.joblib",
+            "TRIFOCUS_FDY_MODEL": "fd_y.joblib",
+        }
+        for env_name, file_name in model_env.items():
+            os.environ[env_name] = str(args.model_dir / file_name)
+        os.environ["TRIFOCUS_MODEL_MODE"] = "joblib"
+
     os.environ.setdefault("OMP_NUM_THREADS", "2")
     os.environ.setdefault("DO_NOT_TRACK", "1")
     os.environ.setdefault("POSTHOG_DISABLED", "1")
     MODEL_MANAGER.load()
+    if args.predict_json is not None:
+        payload = json.loads(args.predict_json.read_text(encoding="utf-8"))
+        result = predict_triangle(payload)
+        args.output_json.parent.mkdir(parents=True, exist_ok=True)
+        args.output_json.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(
+            json.dumps(
+                {
+                    "status": result["status"],
+                    "output_json": args.output_json.as_posix(),
+                    "uses_tabpfn": result["prediction_meta"]["uses_tabpfn"],
+                    "point_count_per_re": result["prediction_meta"]["point_count_per_re"],
+                    "generated_rows": result["prediction_meta"]["generated_rows"],
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return
+
     print(f"TriFocus TabPFN CPU service: http://{args.host}:{args.port}")
     print(json.dumps(MODEL_MANAGER.health(), ensure_ascii=False))
     server = ThreadingHTTPServer((args.host, args.port), Handler)

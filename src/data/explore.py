@@ -34,29 +34,29 @@ def eda_file(file_path: Path, verbose: bool = False) -> None:
     print(f"\nSHAPE: {df.shape[0]} rows x {df.shape[1]} columns")
 
     if verbose:
-        print(f"\nDTYPES:")
+        print("\nDTYPES:")
         for col, dtype in df.dtypes.items():
             print(f"  {col}: {dtype}")
 
-        print(f"\nFIRST 10 ROWS:")
+        print("\nFIRST 10 ROWS:")
         print(df.head(10).to_string())
 
-        print(f"\nDESCRIPTIVE STATISTICS:")
+        print("\nDESCRIPTIVE STATISTICS:")
         print(df.describe().to_string())
 
     # NaN values
     nan_counts = df.isna().sum()
     if nan_counts.sum() > 0:
-        print(f"\nNaN VALUES:")
+        print("\nNaN VALUES:")
         for col in df.columns:
             if nan_counts[col] > 0:
                 pct = 100 * nan_counts[col] / len(df)
                 print(f"  {col}: {nan_counts[col]} ({pct:.1f}%)")
     else:
-        print(f"\nNaN VALUES: none")
+        print("\nNaN VALUES: none")
 
     # Negative values
-    print(f"\nNEGATIVE VALUES:")
+    print("\nNEGATIVE VALUES:")
     has_neg = False
     for col in df.select_dtypes(include=[np.number]).columns:
         if (df[col] < 0).any():
@@ -68,11 +68,11 @@ def eda_file(file_path: Path, verbose: bool = False) -> None:
 
     # geometry_valid
     if "geometry_valid" in df.columns:
-        false_count = (df["geometry_valid"] == False).sum()
+        false_count = df["geometry_valid"].eq(False).sum()
         print(f"\ngeometry_valid: {false_count} False rows out of {len(df)}")
 
     # Outliers (IQR)
-    print(f"\nOUTLIERS (IQR x1.5):")
+    print("\nOUTLIERS (IQR x1.5):")
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     outlier_found = False
     for col in numeric_cols:
@@ -87,7 +87,7 @@ def eda_file(file_path: Path, verbose: bool = False) -> None:
         print("  none")
 
     # Zero values
-    print(f"\nZERO VALUES:")
+    print("\nZERO VALUES:")
     zero_found = False
     for col in numeric_cols:
         n = (df[col] == 0).sum()

@@ -10,9 +10,10 @@ import sys
 
 import pandas as pd
 
-from ..config import CLEANED_DIR, SCALED_DIR
 from src.data.units import normalize_units
 from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
+
+from ..config import CLEANED_DIR, SCALED_DIR
 
 
 def scale_file(src, dst) -> pd.DataFrame:

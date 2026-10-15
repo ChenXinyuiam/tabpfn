@@ -1,6 +1,10 @@
 const RE_VALUES = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
-const POINT_COUNT = 200;
-const RADIUS_GROUPS = [10, 20, 30];
+const POINT_COUNT = 400;
+const CURVATURE_RADIUS = {
+  min: 300,
+  max: 5000,
+  reference: 1200,
+};
 
 const i18n = {
   zh: {
@@ -11,9 +15,11 @@ const i18n = {
     offlineReady: "离线演示模式",
     stepOne: "01 输入",
     inputTitle: "截面几何与曲率半径",
-    radiusLabel: "曲率半径组",
-    radiusUnit: "分组",
-    radiusHelp: "当前支持的 FD 模型组：10 / 20 / 30",
+    radiusLabel: "曲率半径 Rc",
+    radiusUnit: "um",
+    radiusHelp: "Dean 力修正把 Rc 作为连续设计变量。",
+    designCalloutTitle: "设计杠杆",
+    designCalloutText: "Rc 越小，二次流和 Dean 力越强；Rc 越大，侧向偏转越弱。",
     predictButton: "生成并预测",
     predicting: "计算中...",
     presetTitle: "演示案例",
@@ -23,9 +29,9 @@ const i18n = {
     pipelineEyebrow: "Pipeline",
     pipelineTitle: "实时推理链路",
     pipeGeometry: "几何计算",
-    pipePoints: "200 点采样",
+    pipePoints: "400 点采样",
     pipeRe: "Re 扫描",
-    pipeForce: "半径路由与力场预测",
+    pipeForce: "曲率修正与力场预测",
     pipeFocus: "聚焦窗口",
     stepTwo: "02 雷诺数扫描",
     reTitle: "寻找可聚焦区间",
@@ -38,20 +44,34 @@ const i18n = {
     layerFDX: "Dean-x",
     layerFDY: "Dean-y",
     layerFocus: "聚焦",
+    arrowDensity: "箭头密度",
+    arrowSampled: "抽样",
+    arrowAll: "全部点",
     downloadCsv: "下载 CSV",
     downloadPng: "下载 PNG",
     downloadReport: "下载报告",
-    engineNoteBackend: "完整演示模式：前端调用后端 API，曲率半径组参与 Dean 力和聚焦计算；当前后端仍是替代模型。",
-    engineNoteOffline: "离线演示模式：浏览器替代模型使用三边、曲率半径组与 Re 生成结果，未调用 TabPFN。",
+    engineNoteBackend: "完整演示模式：后端使用 TabPFN 力场，并用 Rc 对 Dean 力做曲率修正。",
+    engineNoteOffline: "离线演示模式：浏览器替代模型使用三边、Rc 与 Re 生成结果，未调用 TabPFN。",
     visualEyebrow: "实时截面力场",
     visualTitle: "合力分布与聚焦位置",
     legendLow: "低",
     legendHigh: "高",
+    vectorNote: "箭头可切换抽样/全部",
     focusEyebrow: "聚焦判断",
     focusRange: "可聚焦 Re",
     focusPoint: "聚焦位置",
     pointCount: "采样点",
-    radiusMetric: "曲率半径 R",
+    radiusMetric: "曲率半径 Rc",
+    deanGainMetric: "Dean 增益",
+    designReadoutEyebrow: "设计解读",
+    tightCurve: "急弯",
+    gentleCurve: "缓弯",
+    regimeTight: "急弯强化",
+    regimeNominal: "标称曲率",
+    regimeGentle: "缓弯弱化",
+    adviceTight: "当前 Rc 会显著放大 Dean 力，适合快速筛选强横向迁移方案；若聚焦点贴近边界，应增大 Rc。",
+    adviceNominal: "当前 Rc 接近参考设计，Dean 力和惯性升力处于较均衡状态，适合作为芯片初版参数。",
+    adviceGentle: "当前 Rc 较大，Dean 力较弱，适合降低二次流扰动；若聚焦窗口变窄，应减小 Rc 或提高 Re。",
     engineLabel: "引擎",
     generatedRows: "生成行数",
     latencyLabel: "延迟",
@@ -65,7 +85,7 @@ const i18n = {
     angleLabel: "角度",
     invalidNumber: "请输入三条正数边长。",
     invalidTriangle: "输入边长无法构成三角形。",
-    invalidRadius: "请选择受支持的曲率半径组：10、20 或 30。",
+    invalidRadius: "请输入 300 到 5000 um 之间的曲率半径。",
     backendFailed: "后端不可用，已切换到离线演示。",
     focused: "聚焦良好",
     weak_focus: "弱聚焦",
@@ -90,9 +110,11 @@ const i18n = {
     offlineReady: "Offline demo mode",
     stepOne: "01 Input",
     inputTitle: "Geometry and curvature radius",
-    radiusLabel: "Curvature radius group",
-    radiusUnit: "group",
-    radiusHelp: "Supported FD model groups: 10 / 20 / 30",
+    radiusLabel: "Curvature radius Rc",
+    radiusUnit: "um",
+    radiusHelp: "Dean-force correction uses Rc as a continuous design variable.",
+    designCalloutTitle: "Design lever",
+    designCalloutText: "Smaller Rc strengthens Dean force; larger Rc weakens secondary-flow steering.",
     predictButton: "Generate and predict",
     predicting: "Computing...",
     presetTitle: "Demo presets",
@@ -102,9 +124,9 @@ const i18n = {
     pipelineEyebrow: "Pipeline",
     pipelineTitle: "Live inference path",
     pipeGeometry: "Geometry",
-    pipePoints: "200 points",
+    pipePoints: "400 points",
     pipeRe: "Re sweep",
-    pipeForce: "Radius routing + force field",
+    pipeForce: "Curvature correction + force field",
     pipeFocus: "Focus window",
     stepTwo: "02 Reynolds sweep",
     reTitle: "Find focus window",
@@ -117,20 +139,34 @@ const i18n = {
     layerFDX: "Dean-x",
     layerFDY: "Dean-y",
     layerFocus: "Focus",
+    arrowDensity: "Arrow density",
+    arrowSampled: "Sampled",
+    arrowAll: "All points",
     downloadCsv: "Download CSV",
     downloadPng: "Download PNG",
     downloadReport: "Download report",
-    engineNoteBackend: "Full demo mode: the API uses the radius group in Dean-force and focus calculations; the current backend is still a surrogate.",
-    engineNoteOffline: "Offline demo mode: the browser surrogate uses side lengths, radius group, and Re. TabPFN is not called.",
+    engineNoteBackend: "Full demo mode: the backend uses TabPFN force fields and applies an Rc correction to Dean force.",
+    engineNoteOffline: "Offline demo mode: the browser surrogate uses side lengths, Rc, and Re. TabPFN is not called.",
     visualEyebrow: "Live cross-section force field",
     visualTitle: "Total force and focus location",
     legendLow: "Low",
     legendHigh: "High",
+    vectorNote: "Arrows can be sampled or full",
     focusEyebrow: "Focus assessment",
     focusRange: "Focus Re",
     focusPoint: "Focus point",
     pointCount: "Points",
     radiusMetric: "Curvature R",
+    deanGainMetric: "Dean gain",
+    designReadoutEyebrow: "Design interpretation",
+    tightCurve: "Tight curve",
+    gentleCurve: "Gentle curve",
+    regimeTight: "Tight-curve amplification",
+    regimeNominal: "Nominal curvature",
+    regimeGentle: "Gentle-curve attenuation",
+    adviceTight: "This Rc strongly amplifies Dean force. It is useful for screening aggressive lateral migration; increase Rc if the focus point moves too close to a wall.",
+    adviceNominal: "This Rc is near the reference design. Dean force and inertial lift are comparatively balanced, making it a good first-pass chip setting.",
+    adviceGentle: "This Rc weakens Dean force and reduces secondary-flow steering. Decrease Rc or increase Re if the focus window becomes too narrow.",
     engineLabel: "Engine",
     generatedRows: "Generated rows",
     latencyLabel: "Latency",
@@ -144,7 +180,7 @@ const i18n = {
     angleLabel: "Angles",
     invalidNumber: "Enter three positive side lengths.",
     invalidTriangle: "The side lengths cannot form a triangle.",
-    invalidRadius: "Select a supported curvature radius group: 10, 20, or 30.",
+    invalidRadius: "Enter a curvature radius between 300 and 5000 um.",
     backendFailed: "Backend unavailable; switched to offline demo.",
     focused: "Focused",
     weak_focus: "Weak focus",
@@ -166,6 +202,7 @@ const i18n = {
 const state = {
   lang: "zh",
   layer: "total",
+  arrowMode: "sampled",
   selectedRe: 36,
   result: null,
   canvasTransform: null,
@@ -175,10 +212,12 @@ const state = {
 
 const el = {
   form: document.getElementById("triangleForm"),
+  visualPanel: document.querySelector(".visual-panel"),
   sideAB: document.getElementById("sideAB"),
   sideAC: document.getElementById("sideAC"),
   sideBC: document.getElementById("sideBC"),
-  radiusGroup: document.getElementById("radiusGroup"),
+  curvatureRadius: document.getElementById("curvatureRadius"),
+  curvatureRadiusSlider: document.getElementById("curvatureRadiusSlider"),
   formError: document.getElementById("formError"),
   predictButton: document.getElementById("predictButton"),
   canvas: document.getElementById("forceCanvas"),
@@ -196,6 +235,10 @@ const el = {
   focusPoint: document.getElementById("focusPoint"),
   pointCount: document.getElementById("pointCount"),
   radiusValue: document.getElementById("radiusValue"),
+  deanGainValue: document.getElementById("deanGainValue"),
+  designRegime: document.getElementById("designRegime"),
+  designAdvice: document.getElementById("designAdvice"),
+  sensitivityMarker: document.getElementById("sensitivityMarker"),
   engineValue: document.getElementById("engineValue"),
   generatedRows: document.getElementById("generatedRows"),
   latencyValue: document.getElementById("latencyValue"),
@@ -252,14 +295,14 @@ function readSides() {
     ab: Number(el.sideAB.value),
     ac: Number(el.sideAC.value),
     bc: Number(el.sideBC.value),
-    radiusGroup: Number(el.radiusGroup.value),
+    curvatureRadius: Number(el.curvatureRadius.value),
   };
 }
 
-function validateSides({ ab, ac, bc, radiusGroup }) {
+function validateSides({ ab, ac, bc, curvatureRadius }) {
   if (![ab, ac, bc].every((value) => Number.isFinite(value) && value > 0)) return t("invalidNumber");
   if (ab + ac <= bc || ab + bc <= ac || ac + bc <= ab) return t("invalidTriangle");
-  if (!RADIUS_GROUPS.includes(radiusGroup)) return t("invalidRadius");
+  if (!Number.isFinite(curvatureRadius) || curvatureRadius < CURVATURE_RADIUS.min || curvatureRadius > CURVATURE_RADIUS.max) return t("invalidRadius");
   return "";
 }
 
@@ -289,6 +332,7 @@ async function runPrediction() {
   if (error) return;
 
   el.predictButton.disabled = true;
+  el.visualPanel.classList.add("is-computing");
   el.predictButton.querySelector("span").textContent = t("predicting");
   setPipelineStatus(0);
 
@@ -316,6 +360,7 @@ async function runPrediction() {
     updateAll();
   } finally {
     el.predictButton.disabled = false;
+    el.visualPanel.classList.remove("is-computing");
     el.predictButton.querySelector("span").textContent = t("predictButton");
   }
 }
@@ -329,7 +374,7 @@ async function predictWithBackend(sides) {
       side_ab_um: sides.ab,
       side_ac_um: sides.ac,
       side_bc_um: sides.bc,
-      radius_group: sides.radiusGroup,
+      curvature_radius_um: sides.curvatureRadius,
     }),
   });
   if (!response.ok) throw new Error("prediction failed");
@@ -338,20 +383,31 @@ async function predictWithBackend(sides) {
 }
 
 function normalizeResult(result) {
+  const inputRadius = result.input?.curvature_radius_um ?? result.input?.curvatureRadius ?? readSides().curvatureRadius;
+  const defaults = {
+    engine: "browser-offline-surrogate",
+    model_version: "offline-demo-v1",
+    feature_version: "triangle-force-features-v2-radius",
+    curvature_radius_um: inputRadius,
+    fd_model_route: `dean_rc_${inputRadius}um`,
+    point_count_per_re: POINT_COUNT,
+    generated_rows: POINT_COUNT * RE_VALUES.length,
+    re_values: RE_VALUES,
+    inference_latency_ms: null,
+    data_source: "generated_from_geometry_and_curvature_radius",
+    uses_tabpfn: false,
+  };
   return {
     ...result,
-    prediction_meta: result.prediction_meta || {
-      engine: "browser-offline-surrogate",
-      model_version: "offline-demo-v1",
-      feature_version: "triangle-force-features-v2-radius",
-      radius_group: result.input?.radius_group ?? result.input?.radiusGroup,
-      fd_model_route: `demo_fd_radius_${result.input?.radius_group ?? result.input?.radiusGroup}`,
-      point_count_per_re: POINT_COUNT,
-      generated_rows: POINT_COUNT * RE_VALUES.length,
-      re_values: RE_VALUES,
-      inference_latency_ms: null,
-      data_source: "generated_from_geometry_and_radius_group",
-      uses_tabpfn: false,
+    input: {
+      ...result.input,
+      curvature_radius_um: inputRadius,
+    },
+    prediction_meta: {
+      ...defaults,
+      ...(result.prediction_meta || {}),
+      curvature_radius_um: result.prediction_meta?.curvature_radius_um ?? inputRadius,
+      fd_model_route: result.prediction_meta?.fd_model_route ?? `dean_rc_${inputRadius}um`,
     },
   };
 }
@@ -422,20 +478,24 @@ function generatePoints(geometry) {
   return points;
 }
 
-function focusModel(geometry, re, radiusGroup) {
+function curvatureFactor(curvatureRadius) {
+  return clamp(CURVATURE_RADIUS.reference / curvatureRadius, 0.35, 2.35);
+}
+
+function focusModel(geometry, re, curvatureRadius) {
   const { ab, ac, bc } = geometry.sides;
   const aspect = bc / geometry.height;
   const symmetry = 1 - Math.min(Math.abs(ab - ac) / Math.max(ab, ac), 0.95);
   const aspectScore = Math.exp(-(((aspect - 1.45) / 0.68) ** 2));
   const geometryScore = clamp(0.22 + 0.52 * symmetry + 0.32 * aspectScore, 0.16, 0.98);
-  const curvatureFactor = 20 / radiusGroup;
-  const optRe = clamp(31 + (aspect - 1.25) * 12 + (1 - symmetry) * 10 + (radiusGroup - 20) * 0.42, 18, 56);
+  const deanGain = curvatureFactor(curvatureRadius);
+  const optRe = clamp(31 + (aspect - 1.25) * 12 + (1 - symmetry) * 10 + (deanGain - 1) * 7.5, 18, 56);
   const reScore = Math.exp(-(((re - optRe) / 16) ** 2));
-  const radiusScore = clamp(0.88 + 0.12 * curvatureFactor, 0.78, 1.12);
+  const radiusScore = clamp(0.9 + 0.1 * deanGain, 0.78, 1.14);
   const score = clamp(geometryScore * radiusScore * (0.18 + 0.88 * reScore), 0.03, 0.98);
   const skew = (ab - ac) / (ab + ac);
   const fx = clamp(
-    geometry.centroid.x + (re - 36) * 0.0035 * bc - skew * 0.09 * bc + (20 - radiusGroup) * 0.0015 * bc,
+    geometry.centroid.x + (re - 36) * 0.0035 * bc - skew * 0.09 * bc + (deanGain - 1) * 0.035 * bc,
     Math.min(geometry.vertices.A.x, 0, bc) + bc * 0.12,
     Math.max(geometry.vertices.A.x, 0, bc) - bc * 0.1
   );
@@ -447,8 +507,8 @@ function focusModel(geometry, re, radiusGroup) {
   return { score, x: fx, y: fy, optRe, geometryScore };
 }
 
-function predictForRe(geometry, basePoints, re, radiusGroup) {
-  const focus = focusModel(geometry, re, radiusGroup);
+function predictForRe(geometry, basePoints, re, curvatureRadius) {
+  const focus = focusModel(geometry, re, curvatureRadius);
   const scale = Math.max(geometry.sides.bc, geometry.height);
   const reFactor = re / 60;
   const skew = (geometry.sides.ab - geometry.sides.ac) / (geometry.sides.ab + geometry.sides.ac);
@@ -467,7 +527,7 @@ function predictForRe(geometry, basePoints, re, radiusGroup) {
     const flMix = 0.57 + 0.07 * Math.sin(re / 12);
     const flX = totalBaseX * flMix + 0.0036 * wallBias + 0.001 * skew;
     const flY = totalBaseY * flMix - 0.0028 * verticalBias + 0.0012 * Math.sin(Math.PI * point.xNorm);
-    const deanRadiusFactor = 20 / radiusGroup;
+    const deanRadiusFactor = curvatureFactor(curvatureRadius);
     const fdX = (totalBaseX - flX) * deanRadiusFactor;
     const fdY = (totalBaseY - flY) * deanRadiusFactor;
     const totalX = flX + fdX;
@@ -498,7 +558,7 @@ function predictLocally(sides) {
   const geometry = buildGeometry(sides);
   const basePoints = generatePoints(geometry);
   setPipelineStatus(2);
-  const sweep = RE_VALUES.map((re) => predictForRe(geometry, basePoints, re, sides.radiusGroup));
+  const sweep = RE_VALUES.map((re) => predictForRe(geometry, basePoints, re, sides.curvatureRadius));
   const best = sweep.reduce((a, b) => (b.focus.score > a.focus.score ? b : a));
   const focusedRes = sweep.filter((item) => item.focus.score >= 0.52);
   const status = best.focus.score >= 0.72 ? "focused" : best.focus.score >= 0.48 ? "weak_focus" : "not_focused";
@@ -522,13 +582,13 @@ function predictLocally(sides) {
       engine: "browser-offline-surrogate",
       model_version: "offline-demo-v1",
       feature_version: "triangle-force-features-v2-radius",
-      radius_group: sides.radiusGroup,
-      fd_model_route: `demo_fd_radius_${sides.radiusGroup}`,
+      curvature_radius_um: sides.curvatureRadius,
+      fd_model_route: `dean_rc_${sides.curvatureRadius}um`,
       point_count_per_re: POINT_COUNT,
       generated_rows: POINT_COUNT * RE_VALUES.length,
       re_values: RE_VALUES,
       inference_latency_ms: null,
-      data_source: "generated_from_geometry_and_radius_group",
+      data_source: "generated_from_geometry_and_curvature_radius",
       uses_tabpfn: false,
     },
   };
@@ -582,7 +642,11 @@ function updateSummary() {
   el.focusRange.textContent = focus.reRange ? `${focus.reRange[0]} - ${focus.reRange[1]}` : t("noRange");
   el.focusPoint.textContent = `${format(focus.x, 1)} um, ${format(focus.y, 1)} um`;
   el.pointCount.textContent = String(result.prediction_meta.point_count_per_re || POINT_COUNT);
-  el.radiusValue.textContent = `R = ${result.prediction_meta.radius_group ?? result.input.radius_group ?? result.input.radiusGroup}`;
+  const rc = Number(result.prediction_meta.curvature_radius_um ?? result.input.curvature_radius_um ?? result.input.curvatureRadius ?? CURVATURE_RADIUS.reference);
+  const deanGain = Number(result.prediction_meta.dean_curvature_factor ?? curvatureFactor(rc));
+  el.radiusValue.textContent = `Rc = ${format(rc, 0, locale)} um`;
+  el.deanGainValue.textContent = `${format(deanGain, 2)}x`;
+  updateDesignInterpretation(rc, deanGain);
   el.engineValue.textContent = result.prediction_meta.engine || state.engine;
   el.generatedRows.textContent = format(result.prediction_meta.generated_rows || active.points.length * result.sweep.length, 0, locale);
   el.latencyValue.textContent =
@@ -615,6 +679,18 @@ function updateSummary() {
     focus: state.lang === "zh" ? "聚焦区域与 Re 稳定性" : "Focus region and Re stability",
   };
   el.visualTitle.textContent = titleByLayer[state.layer];
+}
+
+function updateDesignInterpretation(rc, deanGain) {
+  const regime =
+    deanGain >= 1.25 ? { key: "regimeTight", advice: "adviceTight" } :
+    deanGain <= 0.75 ? { key: "regimeGentle", advice: "adviceGentle" } :
+    { key: "regimeNominal", advice: "adviceNominal" };
+  el.designRegime.textContent = t(regime.key);
+  el.designAdvice.textContent = t(regime.advice);
+  const normalized = clamp((rc - CURVATURE_RADIUS.min) / (CURVATURE_RADIUS.max - CURVATURE_RADIUS.min), 0, 1);
+  el.sensitivityMarker.style.left = `${normalized * 100}%`;
+  el.sensitivityMarker.textContent = `${format(rc, 0)} um`;
 }
 
 function summarize(values) {
@@ -663,7 +739,8 @@ function computeTransform() {
   const usedW = (maxX - minX) * scale;
   const usedH = (maxY - minY) * scale;
   const offsetX = (w - usedW) / 2 - minX * scale;
-  const offsetY = (h - usedH) / 2 + maxY * scale;
+  const upwardBias = h > 520 ? h * 0.13 : h * 0.08;
+  const offsetY = (h - usedH) / 2 + maxY * scale - upwardBias;
   const transform = {
     toScreen: (point) => ({ x: offsetX + point.x * scale, y: offsetY - point.y * scale }),
     toData: (point) => ({ x: (point.x - offsetX) / scale, y: (offsetY - point.y) / scale }),
@@ -727,11 +804,16 @@ function drawHeatPoints(points, valueInfo, transform) {
   points.forEach((point) => {
     const screen = transform.toScreen(point);
     const color = colorFor(valueInfo.value(point), valueInfo.min, valueInfo.max, valueInfo.signed);
-    const radius = state.layer === "focus" && point.focus_region_flag ? 6 : 4.2;
+    const radius = state.layer === "focus" && point.focus_region_flag ? 5.6 : 3.25;
+    ctx.beginPath();
+    ctx.arc(screen.x, screen.y, radius + 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = state.layer === "focus" && !point.focus_region_flag ? 0.1 : 0.16;
+    ctx.fill();
     ctx.beginPath();
     ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
-    ctx.globalAlpha = state.layer === "focus" && !point.focus_region_flag ? 0.45 : 0.88;
+    ctx.globalAlpha = state.layer === "focus" && !point.focus_region_flag ? 0.5 : 0.92;
     ctx.fill();
   });
   ctx.globalAlpha = 1;
@@ -764,16 +846,17 @@ function hexToRgb(hex) {
 
 function drawArrows(points, transform) {
   ctx.save();
-  ctx.strokeStyle = "rgba(21,34,37,0.58)";
-  ctx.fillStyle = "rgba(21,34,37,0.58)";
-  ctx.lineWidth = 1.2;
-  const every = Math.max(1, Math.floor(points.length / 38));
+  const isAll = state.arrowMode === "all";
+  ctx.strokeStyle = isAll ? "rgba(21,34,37,0.28)" : "rgba(21,34,37,0.5)";
+  ctx.fillStyle = isAll ? "rgba(21,34,37,0.28)" : "rgba(21,34,37,0.5)";
+  ctx.lineWidth = isAll ? 0.75 : 1.2;
+  const every = isAll ? 1 : Math.max(1, Math.ceil(points.length / 34));
   points.forEach((point, index) => {
     if (index % every !== 0) return;
     const screen = transform.toScreen(point);
     const mag = Math.hypot(point.total_force_x, point.total_force_y);
     if (mag < 1e-8) return;
-    const len = clamp(mag * 1250, 8, 20);
+    const len = isAll ? clamp(mag * 900, 4, 10) : clamp(mag * 1250, 8, 20);
     drawArrow(screen.x, screen.y, screen.x + (point.total_force_x / mag) * len, screen.y - (point.total_force_y / mag) * len);
   });
   ctx.restore();
@@ -910,7 +993,7 @@ function downloadCsv() {
   const rows = [
     [
       "point_id",
-      "radius_group",
+      "curvature_radius_um",
       "re",
       "x_um",
       "y_um",
@@ -930,7 +1013,7 @@ function downloadCsv() {
     item.points.forEach((point) => {
       rows.push([
         point.point_id,
-        state.result.prediction_meta.radius_group,
+        state.result.prediction_meta.curvature_radius_um,
         point.re,
         point.x.toFixed(4),
         point.y.toFixed(4),
@@ -971,7 +1054,7 @@ function downloadReport() {
     `- AB: ${result.input.side_ab_um ?? result.input.ab} um`,
     `- AC: ${result.input.side_ac_um ?? result.input.ac} um`,
     `- BC: ${result.input.side_bc_um ?? result.input.bc} um`,
-    `- Curvature radius group: R = ${meta.radius_group ?? result.input.radius_group ?? result.input.radiusGroup}`,
+    `- Curvature radius Rc: ${meta.curvature_radius_um ?? result.input.curvature_radius_um ?? result.input.curvatureRadius} um`,
     "",
     "## Geometry",
     "",
@@ -984,7 +1067,7 @@ function downloadReport() {
     "",
     `- Engine: ${meta.engine}`,
     `- Uses TabPFN: ${meta.uses_tabpfn ? "yes" : "no"}`,
-    `- FD model route: ${meta.fd_model_route}`,
+    `- Dean force correction: ${meta.fd_model_route}`,
     `- Points per Re: ${meta.point_count_per_re}`,
     `- Re values: ${(meta.re_values || RE_VALUES).join(", ")}`,
     `- Generated rows: ${meta.generated_rows || result.sweep.length * activePrediction().points.length}`,
@@ -1017,9 +1100,9 @@ function triggerDownload(blob, filename) {
 }
 
 const presets = {
-  balanced: { ab: 690, ac: 520, bc: 750, radiusGroup: 20 },
-  tall: { ab: 720, ac: 710, bc: 520, radiusGroup: 30 },
-  asym: { ab: 830, ac: 430, bc: 920, radiusGroup: 10 },
+  balanced: { ab: 690, ac: 520, bc: 750, curvatureRadius: 1200 },
+  tall: { ab: 720, ac: 710, bc: 520, curvatureRadius: 2200 },
+  asym: { ab: 830, ac: 430, bc: 920, curvatureRadius: 650 },
 };
 
 function applyPreset(name) {
@@ -1028,8 +1111,14 @@ function applyPreset(name) {
   el.sideAB.value = preset.ab;
   el.sideAC.value = preset.ac;
   el.sideBC.value = preset.bc;
-  el.radiusGroup.value = String(preset.radiusGroup);
+  setCurvatureRadius(preset.curvatureRadius);
   runPrediction();
+}
+
+function setCurvatureRadius(value) {
+  const next = clamp(Number(value), CURVATURE_RADIUS.min, CURVATURE_RADIUS.max);
+  el.curvatureRadius.value = String(next);
+  el.curvatureRadiusSlider.value = String(next);
 }
 
 function clamp(value, min, max) {
@@ -1054,7 +1143,22 @@ document.querySelectorAll(".layer-tab").forEach((button) => {
   });
 });
 
+document.querySelectorAll(".arrow-mode").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".arrow-mode").forEach((node) => node.classList.remove("active"));
+    button.classList.add("active");
+    state.arrowMode = button.dataset.arrowMode;
+    if (state.result) renderCanvas();
+  });
+});
+
 el.languageToggle.addEventListener("click", () => setLanguage(state.lang === "zh" ? "en" : "zh"));
+el.curvatureRadius.addEventListener("input", () => {
+  setCurvatureRadius(el.curvatureRadius.value);
+});
+el.curvatureRadiusSlider.addEventListener("input", () => {
+  setCurvatureRadius(el.curvatureRadiusSlider.value);
+});
 el.canvas.addEventListener("mousemove", showTooltip);
 el.canvas.addEventListener("mouseleave", hideTooltip);
 el.downloadCsv.addEventListener("click", downloadCsv);

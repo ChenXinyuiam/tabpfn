@@ -12,9 +12,8 @@
 """
 
 import argparse
-import sys
 from pathlib import Path
-from typing import Callable, Any
+from typing import Any, Callable
 
 from utils.paths import ensure_dir, iter_excel_files, select_batch_dir
 

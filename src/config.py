@@ -3,9 +3,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from utils.features import ENGINEERED_FEATURE_COLUMNS, RAW_FEATURE_COLUMNS
-
-
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 MODEL_DIR = ROOT_DIR / "models" / "offline_tabpfn_2_5"
@@ -17,12 +14,8 @@ CLEANED_DIR = INTERIM_DIR / "cleaned"  # 原data下文件夹,已经归档到inte
 SCALED_DIR = INTERIM_DIR / "scaled"    # 原data下文件夹,已经归档到interim
 PROCESSED_DIR = INTERIM_DIR / "features" # 原data下文件夹,已经归档到interim
 PUBLISHED_PROCESSED_ROOT = DATA_DIR / "processed"
-PUBLISHED_PROCESSED_DIR = DATA_DIR / "processed" / "2026-04-22" # ????
-TRIANGLE_GROUPS_ROOT = DATA_DIR / "triangle_groups_fixed_v2_focus" / "combined" # ????
 
 RESULTS_DIR = ROOT_DIR / "results"
-OUTPUTS_DIR = ROOT_DIR / "outputs"
-ANALYSIS_DIR = ROOT_DIR / "dataAnalysis"
 
 
 @dataclass(frozen=True)
@@ -47,26 +40,6 @@ class GeometryColumns:
     right_side: str = "右边长度" # AC
 
 
-@dataclass(frozen=True)
-class ExperimentConfig:
-    target: str
-    transform: str
-    features: list[str]
-    n_splits: int = 5
-    max_time: int = 60
-
-    def as_dict(self, **overrides) -> dict:
-        data = {
-            "target": self.target,
-            "transform": self.transform,
-            "features": self.features,
-            "n_splits": self.n_splits,
-            "max_time": self.max_time,
-        }
-        data.update(overrides)
-        return data
-
-
 GEOMETRY = GeometryColumns()
 
 BASE_COL = GEOMETRY.base
@@ -84,50 +57,3 @@ D_LEFT_COL = GEOMETRY.d_left
 D_RIGHT_COL = GEOMETRY.d_right
 LEFT_SIDE_COL = GEOMETRY.left_side
 RIGHT_SIDE_COL = GEOMETRY.right_side
-
-SCALE_1E12 = {"面积"}
-SCALE_1E6 = {
-    "X",
-    "Z",
-    "周长",
-    "重心坐标X",
-    "重心坐标Y",
-    "点到底边距离",
-    "点到左边距离",
-    "点到右边距离",
-    "点到重心距离",
-}
-
-BASE_FEATURES = RAW_FEATURE_COLUMNS.copy()
-ENGINEERED_FEATURES = RAW_FEATURE_COLUMNS + ENGINEERED_FEATURE_COLUMNS
-
-FD_EXPERIMENT = ExperimentConfig(
-    target="FD",
-    transform="log1p",
-    features=ENGINEERED_FEATURES,
-    n_splits=5,
-    max_time=30,
-)
-
-FL_EXPERIMENT = ExperimentConfig(
-    target="FL",
-    transform="identity",
-    features=ENGINEERED_FEATURES,
-    n_splits=5,
-    max_time=60,
-)
-
-FD_CONFIG = FD_EXPERIMENT.as_dict()
-FL_CONFIG = FL_EXPERIMENT.as_dict()
-
-N_SPLITS = 5
-TABPFN_IGNORE_PRETRAINING_LIMITS = True
-
-FD_TRANSFORM = FD_EXPERIMENT.transform
-FL_TRANSFORM = FL_EXPERIMENT.transform
-FD_MAX_TIME = FD_EXPERIMENT.max_time
-FL_MAX_TIME = FL_EXPERIMENT.max_time
-CLASSIFIER_RANDOM_STATE = 42
-
-TARGET_RE_LIST = list(range(6, 66, 6))
-DEFAULT_ROUND_DECIMALS = 6

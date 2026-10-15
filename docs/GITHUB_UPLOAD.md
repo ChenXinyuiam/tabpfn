@@ -2,6 +2,11 @@
 
 Use this checklist before publishing the project to GitHub.
 
+The current repository already has an origin remote. Inspect it with
+`git remote -v`; do not create a duplicate repository or replace the URL unless
+the destination is intentionally changing. Publish maintained source, tests,
+examples and documentation, not local agent state or deployment snapshots.
+
 ## 1. Review local changes
 
 ```bash
@@ -12,7 +17,7 @@ git diff -- README.md .gitignore docs/GITHUB_UPLOAD.md
 ## 2. Stage intended source and docs
 
 ```bash
-git add README.md .gitignore docs/GITHUB_UPLOAD.md pyproject.toml uv.lock main.py src utils templates
+git add README.md .gitignore docs pyproject.toml uv.lock main.py src utils tests examples .github templates web-demo
 git add -u
 ```
 
@@ -51,5 +56,6 @@ git remote set-url origin https://github.com/ChenXinyuiam/tabpfn.git
 ## Notes
 
 - Raw data, generated data, model checkpoints, trained `.pkl` files, and experiment outputs are ignored by default.
+- `.env`, private keys, local agent state and the two local deployment snapshots are excluded. Inspect staged filenames and scan for secrets before publishing.
 - GitHub blocks files larger than 100 MB. Keep large artifacts outside Git or publish them through Releases/cloud storage.
 - Add a `LICENSE` file before making the repository public if reuse by others is intended.

@@ -19,14 +19,23 @@ import sys
 import numpy as np
 import pandas as pd
 
-from ..config import (
-    SCALED_DIR, PROCESSED_DIR,
-    ANGLE_A_COL, ANGLE_B_COL, ANGLE_C_COL,
-    BASE_COL, HEIGHT_COL, AREA_COL,
-    D_BASE_COL, D_LEFT_COL, D_RIGHT_COL,
-    LEFT_SIDE_COL, RIGHT_SIDE_COL,
-)
 from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
+
+from ..config import (
+    ANGLE_A_COL,
+    ANGLE_B_COL,
+    ANGLE_C_COL,
+    AREA_COL,
+    BASE_COL,
+    D_BASE_COL,
+    D_LEFT_COL,
+    D_RIGHT_COL,
+    HEIGHT_COL,
+    LEFT_SIDE_COL,
+    PROCESSED_DIR,
+    RIGHT_SIDE_COL,
+    SCALED_DIR,
+)
 
 # Output column names
 AREA_CALC_COL     = "面积_calc"

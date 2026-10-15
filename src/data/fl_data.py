@@ -14,7 +14,6 @@ from src.config import (
     ANGLE_B_COL,
     ANGLE_C_COL,
     BASE_COL,
-    DATA_DIR,
     D_BASE_COL,
     D_LEFT_COL,
     D_RIGHT_COL,
@@ -25,7 +24,6 @@ from src.data.calculate import compute_geometry_features
 from src.data.clean import impute_centroid_distance, impute_distance_cols
 from src.data.units import normalize_units
 from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
-
 
 FL_OUTPUT_ROOT = INTERIM_DIR / "fl"
 FL_TARGET_COL = "FL"

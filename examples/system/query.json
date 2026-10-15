@@ -1,0 +1,8 @@
+{
+  "experiment_id": "new-triangle-example",
+  "coordinate_frame": "global_xz",
+  "geometry": {"unit": "um", "vertices": [[375, 400], [0, 0], [750, 0]]},
+  "radius_um": 1200,
+  "re_values": [6, 12, 18, 24, 30],
+  "grid": {"nx": 31, "nz": 31, "include_boundary": false}
+}

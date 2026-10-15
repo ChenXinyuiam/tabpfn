@@ -17,7 +17,7 @@
 运行命令：
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.experiments.interpolate_predicted_fl_files
+.\.venv\Scripts\python.exe -m src interpolate
 ```
 
 输出目录：`results/fd_to_matching_fl_2026-06-20-interpolated`。

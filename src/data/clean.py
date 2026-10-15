@@ -14,26 +14,27 @@ Usage (run from project root):
 """
 
 import argparse
-import sys
 import os
 import re
+import sys
 
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
+
 from ..config import (
-    RAW_DIR,
-    CLEANED_DIR,
-    BASE_COL,
     ANGLE_A_COL,
     ANGLE_B_COL,
     ANGLE_C_COL,
+    BASE_COL,
+    CLEANED_DIR,
     D_BASE_COL,
     D_LEFT_COL,
     D_RIGHT_COL,
+    RAW_DIR,
 )
-from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
 
 CENTROID_DISTANCE_COL = "点到重心距离"
 CENTROID_X_COL = "重心坐标X"

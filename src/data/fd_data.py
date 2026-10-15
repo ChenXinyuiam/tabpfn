@@ -34,7 +34,6 @@ from src.data.calculate import (
 from src.data.units import normalize_units
 from utils.paths import ensure_dir, iter_excel_files_for_batch
 
-
 FD_OUTPUT_ROOT = INTERIM_DIR / "fd"
 FD_TARGET_COLS = ["dean_velocity_x", "dean_velocity_y"]
 

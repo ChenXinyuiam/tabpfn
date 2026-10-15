@@ -15,7 +15,7 @@
 运行命令：
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.experiments.predict_fd_u_from_interpolated_fl_tabpfn `
+.\.venv\Scripts\python.exe -m src fd-from-fl `
   --batch-dir data\rawdata\2026-06-20 `
   --output-dir results\fd_u_from_fl_2026-06-20 `
   --n-estimators 1 `

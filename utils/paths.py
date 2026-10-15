@@ -1,7 +1,7 @@
 """Path helpers used by pipeline scripts."""
 
-from pathlib import Path
 from collections.abc import Iterable
+from pathlib import Path
 
 
 def project_root() -> Path:

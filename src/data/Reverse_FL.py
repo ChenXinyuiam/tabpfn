@@ -10,11 +10,11 @@ import sys
 
 import pandas as pd
 
-from src.config import PROCESSED_DIR, PUBLISHED_PROCESSED_DIR, PUBLISHED_PROCESSED_ROOT
+from src.config import PROCESSED_DIR, PUBLISHED_PROCESSED_ROOT
 from utils.paths import ensure_dir, iter_excel_files_for_batch, select_batch_dir
 
 INPUT_DIR = PROCESSED_DIR
-OUTPUT_DIR = PUBLISHED_PROCESSED_DIR
+OUTPUT_DIR = PUBLISHED_PROCESSED_ROOT
 FL_COL = "FL"
 
 

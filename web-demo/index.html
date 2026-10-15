@@ -59,17 +59,14 @@
                 </div>
               </label>
 
-              <label class="field">
-                <span data-i18n="radiusLabel">Curvature radius group</span>
+              <label class="field radius-field">
+                <span data-i18n="radiusLabel">Curvature radius</span>
                 <div class="input-wrap">
-                  <select id="radiusGroup" name="radiusGroup" aria-label="Curvature radius group">
-                    <option value="10">R = 10</option>
-                    <option value="20" selected>R = 20</option>
-                    <option value="30">R = 30</option>
-                  </select>
-                  <span data-i18n="radiusUnit">group</span>
+                  <input id="curvatureRadius" name="curvatureRadius" type="number" min="300" max="5000" step="50" value="1200" inputmode="decimal" />
+                  <span>um</span>
                 </div>
-                <small class="field-help" data-i18n="radiusHelp">Supported FD model groups: 10 / 20 / 30</small>
+                <input id="curvatureRadiusSlider" class="range-slider" type="range" min="300" max="5000" step="50" value="1200" aria-label="Curvature radius slider" />
+                <small class="field-help" data-i18n="radiusHelp">Dean-force correction uses Rc as a continuous design variable.</small>
               </label>
 
               <p class="form-error" id="formError" role="alert"></p>
@@ -86,6 +83,11 @@
                 <button type="button" class="preset-button" data-preset="tall" data-i18n="presetTall">Tall</button>
                 <button type="button" class="preset-button" data-preset="asym" data-i18n="presetAsym">Asymmetric</button>
               </div>
+            </div>
+
+            <div class="design-callout">
+              <strong data-i18n="designCalloutTitle">Design lever</strong>
+              <span data-i18n="designCalloutText">Smaller Rc strengthens Dean force; larger Rc reduces secondary-flow steering.</span>
             </div>
           </div>
 
@@ -128,6 +130,13 @@
               <button class="layer-tab" type="button" data-layer="fdy" data-i18n="layerFDY">Dean-y</button>
               <button class="layer-tab" type="button" data-layer="focus" data-i18n="layerFocus">Focus</button>
             </div>
+            <div class="arrow-controls" aria-label="Vector arrow density">
+              <span data-i18n="arrowDensity">Arrow density</span>
+              <div class="segmented-control">
+                <button class="arrow-mode active" type="button" data-arrow-mode="sampled" data-i18n="arrowSampled">Sampled</button>
+                <button class="arrow-mode" type="button" data-arrow-mode="all" data-i18n="arrowAll">All points</button>
+              </div>
+            </div>
           </div>
 
           <div class="panel-section">
@@ -153,6 +162,7 @@
               <span data-i18n="legendLow">Low</span>
               <span class="legend-ramp"></span>
               <span data-i18n="legendHigh">High</span>
+              <span class="legend-note" data-i18n="vectorNote">Arrows are sampled</span>
             </div>
           </div>
 
@@ -190,6 +200,10 @@
               <strong id="radiusValue">R = 20</strong>
             </div>
             <div class="metric">
+              <span data-i18n="deanGainMetric">Dean gain</span>
+              <strong id="deanGainValue">1.00x</strong>
+            </div>
+            <div class="metric">
               <span data-i18n="engineLabel">Engine</span>
               <strong id="engineValue">initializing</strong>
             </div>
@@ -200,6 +214,19 @@
             <div class="metric">
               <span data-i18n="latencyLabel">Latency</span>
               <strong id="latencyValue">-</strong>
+            </div>
+          </div>
+
+          <div class="design-readout">
+            <div>
+              <p class="eyebrow" data-i18n="designReadoutEyebrow">Design interpretation</p>
+              <h2 id="designRegime">Nominal curvature</h2>
+            </div>
+            <p id="designAdvice" class="summary-text"></p>
+            <div class="sensitivity-strip" aria-label="Curvature sensitivity">
+              <span data-i18n="tightCurve">Tight curve</span>
+              <strong id="sensitivityMarker"></strong>
+              <span data-i18n="gentleCurve">Gentle curve</span>
             </div>
           </div>
 

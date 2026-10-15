@@ -10,7 +10,6 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-
 LENGTH_SCALE = 1e6
 AREA_SCALE = 1e12
 

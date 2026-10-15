@@ -1,0 +1,18 @@
+{
+  "side_ab_um": 500,
+  "side_ac_um": 500,
+  "side_bc_um": 600,
+  "curvature_radius_um": 1200,
+  "positions": [
+    {
+      "point_id": "center",
+      "x_um": 300,
+      "z_um": 100
+    },
+    {
+      "point_id": "lower",
+      "x_um": 300,
+      "z_um": 20
+    }
+  ]
+}

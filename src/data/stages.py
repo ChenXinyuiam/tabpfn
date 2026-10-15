@@ -11,8 +11,7 @@ from typing import Any
 
 import pandas as pd
 
-from src.data.pipeline import PipelineStage, Pipeline
-
+from src.data.pipeline import Pipeline, PipelineStage
 
 # ── 辅助 ─────────────────────────────────────────────────────────────────────
 

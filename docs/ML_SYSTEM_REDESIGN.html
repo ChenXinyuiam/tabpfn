@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>三角形流力与聚焦预测系统 · 重设计方案</title>
+<style>
+:root{--ink:#202925;--muted:#596660;--green:#17664b;--line:#dce4df;--paper:#fff;--wash:#f4f7f5;--cyan:#126779;--red:#953d52;--soft-red:#fcf2f4;--soft-green:#eaf4ee}
+*{box-sizing:border-box;letter-spacing:0}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;color:var(--ink);background:var(--paper);font:15px/1.85 "Segoe UI","Microsoft YaHei","PingFang SC",sans-serif}a{color:var(--green);text-underline-offset:4px}button{font:inherit;cursor:pointer}a,button{-webkit-tap-highlight-color:transparent}a:focus-visible,button:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+aside{position:fixed;inset:0 auto 0 0;width:230px;padding:30px 24px;background:var(--wash);border-right:1px solid var(--line);overflow-y:auto}.brand{font-size:17px;font-weight:750;line-height:1.5}.edition{color:var(--muted);font-size:12px;margin:10px 0 26px}nav a{display:block;text-decoration:none;color:#4c5b53;padding:8px 10px;border-left:2px solid transparent;font-size:13px}nav a:hover,nav a[aria-current="location"]{color:var(--green);border-left-color:var(--green);background:#e6eee9}.side-note{border-top:1px solid var(--line);padding-top:18px;margin-top:26px;font-size:12px;color:var(--muted)}
+main{max-width:1320px;margin-left:230px;padding:40px 6% 60px}header{border-bottom:2px solid var(--ink);padding-bottom:26px}.topline{display:flex;gap:15px;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.print{border:1px solid var(--line);background:white;padding:5px 14px;border-radius:4px;white-space:nowrap}h1{font-size:32px;line-height:1.4;margin:22px 0 14px;max-width:800px}h2{font-size:23px;line-height:1.5;margin:0 0 20px}h3{font-size:17px;line-height:1.6;margin:26px 0 10px}p{margin:10px 0}strong{font-weight:700}.lead{font-size:17px;max-width:880px}.meta{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--muted);font-size:12px;margin-top:20px}section{padding:34px 0;border-bottom:1px solid var(--line)}.num{color:var(--green);font-size:13px;font-weight:600;display:block;margin-bottom:7px}.note{border-left:3px solid var(--cyan);background:#f0f7f8;padding:14px 18px;margin:18px 0}.critical{border-color:var(--red);background:var(--soft-red)}.note p:first-child{margin-top:0}.note p:last-child{margin-bottom:0}.muted,figcaption{color:var(--muted);font-size:13px}.table-wrap{overflow-x:auto;margin:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}th{background:var(--wash);font-size:12px;color:#405249;font-weight:650}td,th{padding:13px 14px;vertical-align:top;border-bottom:1px solid var(--line);overflow-wrap:anywhere}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}code{font:12px/1.7 Consolas,"Microsoft YaHei",monospace;background:#eff3f0;padding:2px 4px;overflow-wrap:anywhere}pre{background:#f4f6f5;border-left:3px solid #9caea2;padding:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;font-size:12px}pre code{padding:0;background:none}ul,ol{padding-left:23px}li{margin:9px 0}.pill{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:600;background:var(--soft-green);color:var(--green)}.pill.pending{background:#f7edf0;color:var(--red)}.pill.partial{background:#eaf3f7;color:var(--cyan)}
+.lanes{margin:22px 0;border-top:1px solid var(--line)}.lane{display:grid;grid-template-columns:125px 1fr;gap:20px;padding:20px 0;border-bottom:1px solid var(--line)}.lane-label{font-weight:700;color:var(--green);font-size:14px}.lane-label small{display:block;font-size:11px;font-weight:400;color:var(--muted)}.flow{display:flex;align-items:stretch;flex-wrap:wrap;gap:8px}.node{background:var(--wash);padding:10px 12px;border-top:2px solid #a6baae;min-width:115px;flex:1;line-height:1.6;font-size:13px}.node b{display:block}.node small{color:var(--muted);font-size:11px}.arrow{align-self:center;color:#7b8a81}.node.accent{border-color:var(--cyan);background:#eff7f8}.node.gate{border-color:var(--red);background:var(--soft-red)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:30px}.two-col>div{min-width:0}.formula{font:15px/1.9 Consolas,"Microsoft YaHei",monospace;overflow-wrap:anywhere;color:var(--green);padding:10px 0}.steps{list-style:none;padding:0;counter-reset:step}.steps li{counter-increment:step;position:relative;padding:2px 0 14px 43px;border-bottom:1px solid var(--line)}.steps li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:4px;color:var(--green);font:600 14px/1.8 Consolas,monospace}.steps strong{display:block}figure{margin:20px 0}.folds{display:grid;grid-template-columns:90px repeat(5,1fr);gap:5px;font-size:12px}.folds>span{padding:9px 5px;text-align:center;background:var(--wash)}.folds .test{background:#dceee6;color:var(--green);font-weight:700}.folds .head{background:white;color:var(--muted)}.timeline{border-left:2px solid var(--line);padding-left:22px}.phase{padding:0 0 22px;position:relative}.phase:before{content:"";position:absolute;left:-28px;top:8px;width:10px;height:10px;background:var(--green);border:2px solid white}.phase h3{margin:0}.source-list{list-style:none;padding:0}.source-list li{display:grid;grid-template-columns:45px 1fr;gap:10px;margin:0;padding:13px 0;border-bottom:1px solid var(--line)}.source-list a{overflow-wrap:anywhere}.source-list small{display:block;color:var(--muted)}footer{font-size:12px;color:var(--muted);padding-top:26px}.mobile-label{display:none}
+@media(min-width:1550px){main{padding-left:85px;padding-right:85px}}
+@media(max-width:1000px){aside{width:190px;padding:25px 14px}main{margin-left:190px;padding:30px}h1{font-size:28px}.lane{grid-template-columns:1fr;gap:10px}.lane-label small{display:inline;margin-left:8px}.two-col{gap:20px}}
+@media(max-width:700px){aside{position:static;width:auto;padding:20px;border-right:0;border-bottom:1px solid var(--line)}.edition{margin:5px 0 12px}.side-note{display:none}nav{display:grid;grid-template-columns:1fr 1fr;gap:2px}nav a{padding:5px 8px;font-size:12px}main{margin:0;padding:24px 20px 40px}h1{font-size:26px}h2{font-size:21px}.lead{font-size:15px}.two-col{grid-template-columns:1fr;gap:0}.topline{align-items:flex-start;font-size:11px}.print{font-size:12px}section{padding:28px 0}.node{min-width:105px}.folds{grid-template-columns:55px repeat(5,minmax(0,1fr));font-size:10px}.folds>span{padding:8px 0}td,th{padding:10px 8px;font-size:12px}.table-wrap.wide table{min-width:650px}.source-list li{grid-template-columns:30px 1fr}.formula{font-size:13px}}
+@media print{@page{size:A4;margin:17mm}body{font-size:10pt;line-height:1.65}aside,.print{display:none}main{margin:0;padding:0;max-width:none}header{padding-bottom:15px}h1{font-size:23pt}h2{font-size:16pt}h3{font-size:12pt}section{padding:18px 0}a{color:inherit;text-decoration:none}.note,figure,.phase,tr{break-inside:avoid}h2,h3{break-after:avoid}.table-wrap{overflow:visible}.table-wrap.wide table{min-width:0}td,th{font-size:9pt;padding:7px}pre{font-size:8pt}.node{min-width:90px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<aside aria-label="文档目录">
+  <div class="brand">三角形流力<br>与聚焦预测系统</div>
+  <div class="edition">架构重设计 / 2026.10.03</div>
+  <nav aria-label="章节">
+    <a href="#judgment">01 设计判断</a><a href="#architecture">02 总体架构</a>
+    <a href="#contract">03 数据与学习信号</a><a href="#audit">04 数据审核</a>
+    <a href="#evaluation">05 五折与链路评估</a><a href="#inference">06 新三角形推理</a>
+    <a href="#grid">07 格点与插值加点</a><a href="#mapping">08 现有代码承接</a>
+    <a href="#delivery">09 接口与结果管理</a><a href="#roadmap">10 实施顺序</a>
+    <a href="#sources">11 代码依据</a>
+  </nav>
+  <div class="side-note">基于本地仓库静态核对。<br>区分已有能力与建议方案。<br>本文不代表模型精度验收。</div>
+</aside>
+<main>
+<div class="note"><p><strong>实施更新：</strong>统一入口 <code>python -m src system</code> 已落地，包含审核、分组评估、模型上下文包和预测。详见 <a href="SYSTEM_WORKFLOW.md">系统使用指南</a>。下文保留原设计讨论；拟议能力与当前实现的差异以使用指南为准。真实 Fzong 物理定义仍需确认。</p></div>
+<header>
+  <div class="topline"><span>FDFLPredictions / 系统设计讨论稿</span><button class="print" type="button" onclick="window.print()">打印 / PDF</button></div>
+  <h1>从新三角形到力场，<br>再到聚焦判定</h1>
+  <p class="lead">你的模块方向成立。建议把系统明确为<strong>数据审核入库、离线训练评估、新三角形推理</strong>三条工作流，以共享的数据契约和特征计算连接起来。实现重点是补齐物理定义、几何外推评估与整条预测链的验证。</p>
+  <div class="meta"><span>范围：FD / FL → Fzong → 聚焦</span><span>目标：未知几何与新批次数据</span><span>交付：设计文档，尚未实施系统重构</span></div>
+</header>
+
+<section id="judgment">
+  <span class="num">01 / DESIGN REVIEW</span><h2>需要先解决的六个设计问题</h2>
+  <div class="table-wrap"><table><thead><tr><th>问题</th><th>为什么会影响结果</th><th>建议决策</th></tr></thead><tbody>
+  <tr><td>五折的拆分单位</td><td>同一三角形的不同点、Re、镜像和插值数据高度相关。随机分行会让测试集包含训练时已经见过的几何。</td><td>新三角形任务以<strong>物理几何族</strong>分组做外层五折；空间补点另用空间分组评估。</td></tr>
+  <tr><td>FD 的物理量未定</td><td>当前维护代码预测 FD 文件中的 <code>u</code>。仓库明确记录其物理含义与单位未确认，不能据文件名直接认定是力。[S2]</td><td>暂存为 <code>FD_u</code>；确认目标量、单位、分量和必要的转换参数后，再启用力合成。</td></tr>
+  <tr><td>Fzong 的定义</td><td>现有聚焦特征依赖 Fzong 正负号。向量模长恒非负，无法替代有符号分量；<code>fl</code>、<code>flx</code>、<code>fly</code>也不能直接混用。</td><td>固定 Fzong 是哪个方向的合力、投影或其他量；统一坐标系、符号约定和目标单位。</td></tr>
+  <tr><td>缺少模型产物环节</td><td>五折会得到五个验证模型，但推理需要明确使用哪个版本、训练数据和特征配置。</td><td>独立管理模型配置与训练快照；评估通过后按冻结方案拟合发布版本，或明确采用已评估的折模型集成。</td></tr>
+  <tr><td>上游误差传到分类器</td><td>从真实 Fzong 提取的边界较干净，而预测场的零交叉、符号和边界可能偏移。分类器单独成绩不能代表整条链。</td><td>同时报告真实场分类与预测场端到端分类；预测场训练特征必须用分组折外预测生成。</td></tr>
+  <tr><td>二分类还是三分类</td><td>当前维护模块只接收 F/UF；历史模块把 WF/F 合并。两者都不是独立的 WF、F、UF 三分类。[S5]</td><td>第一版可沿用 F/UF；若需三类，要提供三类人工标签，并同步升级训练、概率输出、校准和指标。</td></tr>
+  </tbody></table></div>
+  <p class="muted">当前仓库已恢复 <code>src/data</code>，并拥有维护中的 <code>src/regression</code> 与 <code>src/focus_inspection</code>。本方案以当前文件为依据，未沿用早期目录缺失的结论。</p>
+</section>
+
+<section id="architecture">
+  <span class="num">02 / ARCHITECTURE</span><h2>三条工作流，共享一套基础能力</h2>
+  <figure aria-label="数据审核、离线评估、新三角形预测三条工作流">
+  <div class="lanes">
+    <div class="lane"><div class="lane-label">A · 数据入库<small>按批次执行</small></div><div class="flow"><div class="node"><b>原始文件 / 几何参数</b><small>保留原件与来源</small></div><span class="arrow" aria-hidden="true">→</span><div class="node"><b>审核与标准化</b><small>字段、单位、物理量</small></div><span class="arrow" aria-hidden="true">→</span><div class="node"><b>版本化数据集</b><small>接受、隔离、问题记录</small></div></div></div>
+    <div class="lane"><div class="lane-label">B · 离线评估<small>需要参考真值</small></div><div class="flow"><div class="node"><b>数据快照 + 协议</b><small>固定划分和模型预算</small></div><span class="arrow" aria-hidden="true">→</span><div class="node"><b>分组交叉验证</b><small>FD、FL、聚焦及全链路</small></div><span class="arrow" aria-hidden="true">→</span><div class="node accent"><b>指标与模型版本</b><small>选型、全量拟合、登记</small></div></div></div>
+    <div class="lane"><div class="lane-label">C · 预测运行<small>新几何 / 新位置</small></div><div class="flow"><div class="node"><b>几何 + 工况</b><small>审核后生成查询格点</small></div><span class="arrow" aria-hidden="true">→</span><div class="node"><b>共享特征 → FD / FL</b><small>调用冻结的模型版本</small></div><span class="arrow" aria-hidden="true">→</span><div class="node gate"><b>物理转换 → Fzong</b><small>定义和单位必须已确认</small></div><span class="arrow" aria-hidden="true">→</span><div class="node accent"><b>截面特征 → 聚焦</b><small>概率、类别、复核状态</small></div></div></div>
+  </div><figcaption>评估器与推理编排器调用同一份格点、特征、模型和物理计算实现，避免两套流程逐渐产生差异。</figcaption>
+  </figure>
+  <div class="table-wrap wide"><table><thead><tr><th>能力边界</th><th>输入 → 输出</th><th>职责约束</th></tr></thead><tbody>
+    <tr><td>数据审核与标准化</td><td>文件 / 几何请求 → 规范数据 + 审核报告</td><td>按任务检查必需列；确定性规范化有记录；不自动补造监督标签。</td></tr>
+    <tr><td>几何、格点与特征</td><td>顶点、坐标、工况 → 查询位置与 X</td><td>计算距离、归一化坐标等；版本化边界、坐标及采样规则。</td></tr>
+    <tr><td>模型适配与产物</td><td>训练 X/y 或查询 X → 模型包 / 预测</td><td>FD、FL、聚焦分别有明确任务和输出；保存训练上下文与预处理器。</td></tr>
+    <tr><td>评估</td><td>数据快照 + 模型配置 + 划分 → 折外预测 + 指标</td><td>掌握拆分、内层选型和比较协议；测试集不参与任何拟合与选择。</td></tr>
+    <tr><td>物理转换</td><td>已确认的预测物理量 + 参数 → Fzong</td><td>检查量纲、分量和点位对应；版本化公式及适用条件。</td></tr>
+    <tr><td>Pipeline 编排</td><td>运行请求 + 模型包 → 完整结果包</td><td>负责步骤顺序、失败传播、缓存和产物记录；不复制各模块算法。</td></tr>
+    <tr><td>报告与追溯</td><td>审核、预测、指标、版本 → 表格 / 图 / HTML</td><td>可从已有数值结果重建报告；禁止把无真值预测描述为准确率。</td></tr>
+  </tbody></table></div>
+  <p>先在现有 Python 工程内保持这些边界即可。每个模块不必对应一个服务，也不需要一开始引入分布式调度。</p>
+</section>
+
+<section id="contract">
+  <span class="num">03 / DATA CONTRACT</span><h2>把数据类型、样本单位和学习信号写清楚</h2>
+  <div class="table-wrap wide"><table><thead><tr><th>任务</th><th>一条学习样本</th><th>输入 X</th><th>监督信号 y</th></tr></thead><tbody>
+  <tr><td>FD 回归</td><td>某几何、工况、空间位置的一个点</td><td>几何描述、朝向、Re、曲率半径 R、x/z、边界距离；需要时加入粒径与流体参数</td><td>真实仿真或实验提供的 <code>u</code> 或已确认的力分量；目标身份不能混淆</td></tr>
+  <tr><td>FL 回归</td><td>某几何、工况、空间位置的一个点</td><td>共享几何与工况特征；明确对应目标分量</td><td>独立参考的 <code>fl</code> / <code>flx</code> / <code>fly</code>，按任务分别建模</td></tr>
+  <tr><td>聚焦分类</td><td>一个完整截面工况</td><td>Fzong 场的边界宽度、位置、符号比例、空间统计，以及几何 / R / Re</td><td>独立人工、实验或高可信参考标签：F/UF 或 WF/F/UF</td></tr>
+  <tr><td>Fzong 合成</td><td>同一工况同一点的物理量</td><td>已对齐且定义一致的 FD、FL、必要物理参数</td><td>通常为确定性计算；若评估合成误差，仍需独立参考 Fzong</td></tr>
+  </tbody></table></div>
+  <p><strong>当前分类代码的样本键是 <code>source_file + R + re</code></strong>。新设计建议建立稳定 <code>sample_id</code>，连接几何、朝向、工况及重复实验 ID；文件名仅作来源。一个截面的几千个点最终贡献一个聚焦标签。</p>
+  <div class="two-col"><div><h3>训练数据集</h3><ul><li>至少有多个几何族，才能学习并验证跨三角形泛化。</li><li>FD / FL 可来自不同采样位置，分别利用各自原始标签训练；统一查询网格后对齐预测。</li><li>同一物理样本跨文件、重复导出和派生数据要有共同的来源关系。</li><li>不能使用分类规则自动生成标签，再把对该规则的拟合当作真实聚焦识别能力。</li></ul></div><div><h3>预测请求</h3><ul><li>新三角形顶点，或可唯一重建三角形的参数、朝向和坐标约定。</li><li>Re 列表、曲率半径及单位；若粒径 / 材料参数变化也必须显式给出。</li><li>格点分辨率、边界规则，或直接提供查询坐标。</li><li>预测请求可没有 FD、FL 和聚焦标签；没有真值时只输出预测与覆盖诊断。</li></ul></div></div>
+  <h3>建议的身份与单位字段</h3>
+  <pre><code>dataset_id, source_file, source_hash, source_row, schema_version
+geometry_id, geometry_family_id, orientation, coordinate_frame
+sample_id, point_id, re, curvature_radius, particle_radius
+x, z, length_unit, area_unit, target_name, target_unit, component
+value_origin: measured | simulated | interpolated | predicted
+parent_ids, transform_version, model_version</code></pre>
+  <p class="muted">以上是目标数据契约，不是现有代码的完整字段清单。曲率半径 R 与粒子半径必须分开；几何尺寸分组与“同形不同尺度”分组也应分别定义。</p>
+</section>
+
+<section id="audit">
+  <span class="num">04 / DATA AUDIT</span><h2>审核是准入门槛，标准化是有记录的转换</h2>
+  <ol class="steps">
+    <li><strong>登记原始输入</strong>保留原文件、批次、哈希和提供者说明；识别 FD、FL、Fzong、标签表或纯几何请求。原始数据只读。</li>
+    <li><strong>检查结构与数值</strong>核对必需列、重复列、数值可解析性、NaN / Inf、唯一键。训练任务缺失 y 时隔离相关记录；预测任务允许没有 y。</li>
+    <li><strong>检查单位与物理语义</strong>显式声明 m / mm / um；已经是 um 时转换倍率为 1。面积按平方倍率处理；速度与力分别管理。未知单位不得仅凭数值大小自动放行。</li>
+    <li><strong>检查几何与坐标</strong>三角形非退化、边角高相互一致；验证点在三角形内部、坐标原点与镜像变换。字段提供的距离与重算距离不一致时保留差异。</li>
+    <li><strong>检查重复、覆盖和标签</strong>重复坐标区分完全重复、重复测量和冲突值；统计每个 R/Re 的点数、空间覆盖与标签数量。标签匹配必须一对一。</li>
+    <li><strong>生成准入结论与快照</strong>输出 ACCEPT / REVIEW / REJECT 及原因。标准化后的数据与审计表一起版本化；修复规则显式记录，不能静默改标签、镜像符号或异常值。</li>
+  </ol>
+  <div class="note"><p><strong>审核分两层：</strong>输入审核检查格式、物理量与几何是否自洽；推理适用性检查输入是否超出某个模型的几何、Re、R 和空间支持范围。新三角形本来就可能超范围，应该标注外推风险，而不是一概判成坏数据。</p></div>
+  <p>建议输出 <code>audit.json</code>、<code>issues.csv</code>、<code>accepted_points</code>、<code>rejected_rows</code> 和 <code>manifest.json</code>。缺失值插补器、缩放器等依赖数据统计量的步骤放到每折训练内部；列名映射、明确单位换算等确定性步骤可先完成。</p>
+</section>
+
+<section id="evaluation">
+  <span class="num">05 / EVALUATION</span><h2>五折是一种配置，评估问题决定怎么拆分</h2>
+  <p>评估请求至少包含 <code>dataset_id + task + model_config + split_protocol + metrics</code>。比较不同模型时使用同一数据快照、同一划分、相同训练采样规则与可比预算。</p>
+  <div class="table-wrap"><table><thead><tr><th>想回答的问题</th><th>划分协议</th><th>适用结论</th></tr></thead><tbody>
+    <tr><td>同一个三角形补新位置</td><td>按空间位置或连续空间区域分组；相关重复点和派生点不可跨折</td><td>已知几何的空间预测；若要证明空间外推，应专门留出边缘 / 区域</td></tr>
+    <tr><td>从已知三角形预测新三角形</td><td>几何族 GroupKFold(5)；镜像、全部 R/Re、所有 FD/FL/Fzong 来源按同一几何表分配</td><td>未知几何泛化；严格参数域外外推还需专设尺寸 / 角度超范围测试</td></tr>
+    <tr><td>新 Re 或新曲率半径</td><td>另设工况留出，尤其留出训练范围以外的值</td><td>工况泛化；不能由几何五折成绩替代</td></tr>
+    <tr><td>新批次 / 新来源数据</td><td>批次或提供者留出，按研究目的同时控制几何重叠</td><td>数据来源变化下的适用性</td></tr>
+  </tbody></table></div>
+  <figure aria-label="五折示意，每组完整几何数据仅有一次作为外层测试集">
+    <div class="folds"><span class="head">外层折</span><span class="head">几何组 A</span><span class="head">几何组 B</span><span class="head">几何组 C</span><span class="head">几何组 D</span><span class="head">几何组 E</span>
+      <span>Fold 1</span><span class="test">测试</span><span>训练</span><span>训练</span><span>训练</span><span>训练</span>
+      <span>Fold 2</span><span>训练</span><span class="test">测试</span><span>训练</span><span>训练</span><span>训练</span>
+      <span>Fold 3</span><span>训练</span><span>训练</span><span class="test">测试</span><span>训练</span><span>训练</span>
+      <span>Fold 4</span><span>训练</span><span>训练</span><span>训练</span><span class="test">测试</span><span>训练</span>
+      <span>Fold 5</span><span>训练</span><span>训练</span><span>训练</span><span>训练</span><span class="test">测试</span></div>
+    <figcaption>A–E 表示五个几何集合，每个集合可以包含多个三角形族。独立几何族少于 5 个时，减少折数或用留一几何法，并明确证据有限；不能把一个几何拆成五份凑数。</figcaption>
+  </figure>
+  <h3>指标分层报告</h3>
+  <div class="table-wrap"><table><thead><tr><th>层级</th><th>主要指标</th><th>统计口径</th></tr></thead><tbody>
+    <tr><td>FD / FL</td><td>各目标分别报告 R²、MAE、RMSE；辅以符号错误率、近零区域误差</td><td>保留原目标单位。报告各折、各几何、各 Re、几何等权汇总和汇总 OOF，避免密集点几何主导结果。</td></tr>
+    <tr><td>Fzong</td><td>同点误差、符号一致率、零交叉 / 边界位置误差；矢量可另评方向</td><td>物理定义确认且存在参考场才能评估；不能拿自己的 FD/FL 预测合成结果充当真值。</td></tr>
+    <tr><td>聚焦</td><td>Macro-F1、balanced accuracy、各类别 precision/recall、混淆矩阵</td><td>样本单位为截面工况；二分类可补 PR-AUC / ROC-AUC，三分类按明确的多类口径计算。</td></tr>
+    <tr><td>概率与运行</td><td>Log loss、Brier / 校准图、复核比例、有效预测覆盖率、耗时与资源</td><td>概率不等于可信度证明。阈值与校准仅在训练侧选定；剔除失败样本时必须报告完整分母。</td></tr>
+  </tbody></table></div>
+  <p class="muted">R² 可以为负；目标恒定或测试样本不足时应标记不可解释 / 不可用。五折标准差不是独立重复实验的置信区间；不确定性估计应以几何为重采样单位。验收阈值由用途与误差容忍度预先约定。</p>
+  <h3>全链路评估：每个外层测试几何在所有模块中都要不可见</h3>
+  <ol>
+    <li>先按几何分配外层训练集与测试集，FD、FL、Fzong、聚焦标签和派生数据共用这张划分表。</li>
+    <li>在外层训练集内部做分组交叉拟合：用其他内层几何训练 FD/FL，预测被留出的内层几何，形成训练侧的折外预测场。</li>
+    <li>从这些折外预测场合成 Fzong、提取截面特征，再用独立标签训练聚焦模型。若选择特征、超参数或概率阈值，内层验证样本也不能参与相应上游模型拟合；必要时增加一层交叉拟合。</li>
+    <li>用全部外层训练数据拟合上游模型，生成外层测试几何的力场；沿相同网格和特征协议做聚焦预测。</li>
+    <li>只在最后对比外层真值，汇总五折的回归、Fzong 和聚焦结果。另设真实 Fzong 输入的分类基线，观察上游误差带来的变化。</li>
+  </ol>
+  <div class="note critical"><p><strong>不能先在全量数据上插值 / 拟合 FD、FL，再做分类五折。</strong>这样测试几何的信息可能已进入上游模型。所有使用标签或统计量的数据处理、加点、调参和模型选择必须服从完整链路的划分。</p></div>
+  <p>若没有可关联的 FD/FL 训练数据、Fzong 定义与截面聚焦标签，可以先完成各模块独立评估，但应将端到端聚焦能力标记为“待验证”。</p>
+</section>
+
+<section id="inference">
+  <span class="num">06 / INFERENCE</span><h2>新三角形的一次预测应该这样运行</h2>
+  <ol class="steps">
+    <li><strong>读取请求与模型版本</strong>输入三角形、朝向、Re 列表、R 及单位、必要物理参数、网格配置。选择与任务、特征版本及分量一致的 FD / FL / 聚焦模型包。</li>
+    <li><strong>审核几何并生成查询格点</strong>重建真实三角形顶点，生成水平分层规则网格或接受外部坐标；裁剪到内部并保留固定 point_id。各 Re 可共用同一坐标集合。</li>
+    <li><strong>计算共享特征与适用性诊断</strong>计算边长、角度、面积、距离、x/H 与 z/H 等。检查新几何与训练几何的差异、Re/R 超范围情况和空间覆盖；坐标变换时分量和符号必须同步。</li>
+    <li><strong>分别预测 FD 与 FL</strong>加载模型和训练侧预处理器，对同一查询表推理。第一版建议两条回归支路独立，特征均能在推理时获得。</li>
+    <li><strong>经过物理转换合成 Fzong</strong>先核验物理量、单位、分量和坐标系，再按确认公式计算。若 FD 实际为速度，必须先调用已验证的速度到力转换；缺参数则保留上游结果并停止该分支。</li>
+    <li><strong>按截面工况提取特征并分类</strong>按 sample_id 聚合完整力场，复用训练时的平滑、边界宽度 / 位置与统计定义；输出类别、各类概率、review_status 和原因。</li>
+    <li><strong>保存结果、诊断与可追溯信息</strong>导出点表、截面判定表、场图和 HTML；记录请求、数据 / 模型 / 特征 / 物理公式版本、覆盖率、无效点和运行日志。</li>
+  </ol>
+  <div class="formula">FD_branch(X_query) → FD_u 或已确认的 FD 分量<br>FL_branch(X_query) → 已确认的 FL 分量<br>Fzong = physical_adapter(FD_output, FL_output, physical_parameters)</div>
+  <p>只有在<strong>同一方向、相同单位、相同坐标约定</strong>且没有遗漏相关力项时，才能采用 <code>Fzong_component = FD_component + FL_component</code>。现有字段名 <code>Fzong</code> / <code>Fzong2</code> 本身不足以证明该定义。</p>
+  <div class="note"><p><strong>两条允许的快捷入口：</strong>已有查询坐标可跳过网格生成；已有合规 Fzong 场可直接进入截面特征与聚焦推理。每次输出必须标注实际走过的路径。</p></div>
+  <p>目前 <code>fd-from-fl</code> 使用插值 FL 辅助预测 u，属于另一种依赖结构。若未来选用这种模型，应明确为 FL → FD → Fzong 的有向流程，用折外 FL 特征训练下游；不要同时让 FD 和 FL 互相依赖而形成循环。</p>
+</section>
+
+<section id="grid">
+  <span class="num">07 / GRID &amp; INTERPOLATION</span><h2>生成查询格点和插值生成标签，是两件不同的工作</h2>
+  <div class="table-wrap"><table><thead><tr><th>操作</th><th>放在哪里</th><th>生成什么</th><th>评价方式</th></tr></thead><tbody>
+    <tr><td>新三角形查询网格</td><td>推理时，几何审核后、模型预测前</td><td>坐标与几何特征，没有 y</td><td>检查内部点、边界、密度、重复和点序；不会凭空增加训练信号</td></tr>
+    <tr><td>基于原始场插值加点</td><td>可选训练增强，只能在相应训练折内生成</td><td>原始点派生的伪标签及来源</td><td>只用独立原始真值评估；记录方法、父数据和外推标记</td></tr>
+    <tr><td>TabPFN 预测加点</td><td>用训练侧模型预测新位置</td><td>模型预测值，来源为 predicted</td><td>同样不是独立真值；用它训练另一模型时属于蒸馏 / 级联方案，需单独评估</td></tr>
+    <tr><td>绘图平滑与重采样</td><td>报告层，或已冻结的截面特征协议</td><td>展示场或一致采样场</td><td>不能隐藏无覆盖区域，也不能拿平滑后的结果替换原始测试真值</td></tr>
+  </tbody></table></div>
+  <h3>网格规则会影响聚焦特征</h3>
+  <p>当前边界特征按相同 z 的水平行排序，并使用三点中值平滑。[S6] 因此第一版宜采用水平分层网格，并明确 x/z 间距、边界是否纳入、原点、方向和每层采样。任意随机散点未必满足现有特征算法的输入假设。</p>
+  <ul><li>训练与推理采用一致的采样 / 重采样协议；非均匀采样时说明符号比例的权重，避免稠密区域主导统计。</li><li>用粗、中、细三个分辨率检查边界特征、Fzong 符号分布和分类概率是否稳定；网格变化会同时改变三点平滑的物理尺度。</li><li>若启用相邻点补点，水平 / 竖直中点与单元中心分开定义；四角齐全才生成该单元中心，并用坐标容差去重。</li><li>零附近的符号可能受数值误差影响，可设计带物理单位的零容差，但必须版本化，并在训练侧验证后固定。</li></ul>
+  <p class="muted">单个三角形内的凸包覆盖不能证明跨三角形预测可靠。新几何还需要特征域诊断与几何留出验证。</p>
+</section>
+
+<section id="mapping">
+  <span class="num">08 / CURRENT CODE</span><h2>保留已有模块，补齐缺失的连接</h2>
+  <div class="table-wrap wide"><table><thead><tr><th>当前代码</th><th>已具备</th><th>重设计中的处理</th><th>状态</th></tr></thead><tbody>
+    <tr><td><a href="../src/data/template_schema.py">src/data/template_schema.py</a></td><td>列名适配、长度 / 面积转换、FD/FL 模板读入</td><td>提炼共享数据契约；增加明确的物理目标和单位声明，处理同义名碰撞</td><td><span class="pill">可复用</span></td></tr>
+    <tr><td><a href="../src/focus_inspection/audit_focus.py">focus_inspection/audit_focus.py</a><br><a href="../src/focus_inspection/geometry_integrity.py">geometry_integrity.py</a></td><td>无模型审核、标签关联、物理几何一致性与分组</td><td>向通用审核接口扩展；补 FD/FL、纯几何请求和跨数据类型身份映射</td><td><span class="pill partial">部分覆盖</span></td></tr>
+    <tr><td><a href="../src/regression/evaluation.py">regression/evaluation.py</a></td><td>空间留出与完整几何族留出，R² / MAE / RMSE</td><td>当前 external 是逐几何留一，internal 是一次位置留出；增加显式五折协议及共享 fold manifest</td><td><span class="pill partial">需统一协议</span></td></tr>
+    <tr><td><a href="../src/regression/predict_fields.py">regression/predict_fields.py</a></td><td>同配对文件的 FD-u ↔ FL 点位预测及空间诊断</td><td>现入口逐文件拟合；新三角形需要多几何训练包与独立 query 表接口</td><td><span class="pill partial">需泛化接口</span></td></tr>
+    <tr><td><a href="../src/focus_inspection/modeling.py">focus_inspection/modeling.py</a><br><a href="../src/focus_inspection/evaluation.py">evaluation.py</a><br><a href="../src/focus_inspection/predict_focus.py">predict_focus.py</a></td><td>分组分类评估、配方与训练快照校验、新批次 F/UF 预测</td><td>保留配方机制；增加预测场训练 / 验证；三分类作为独立标签版本</td><td><span class="pill">可复用</span></td></tr>
+    <tr><td><a href="../web-demo/tabpfn_service.py">web-demo/tabpfn_service.py</a></td><td>三角形几何、查询点生成、服务入口和模型调用</td><td>参考几何与查询接口；经验聚焦分数、半径修正及旧力合成不能直接当科学链路</td><td><span class="pill partial">选择性承接</span></td></tr>
+    <tr><td>统一物理转换 + 全链路编排</td><td>已有零散接口与历史算术路径</td><td>新增明确且可校验的 physical_adapter 和训练 / 评估 / 推理编排</td><td><span class="pill pending">需建设</span></td></tr>
+  </tbody></table></div>
+  <p>列名适配层当前会把 <code>FLy</code> 等名称映射为 <code>fl</code>。[S1] 新系统应保留原字段名和分量身份，防止规范化后无法判断实际预测的是哪个方向。</p>
+  <h3>建议的增量目录结构</h3>
+  <pre><code>src/
+  data/                 # 保留；契约、审核、单位、数据快照
+  geometry/             # 建议新增；坐标系、三角形、查询网格、共享几何特征
+  regression/           # 保留；FD/FL 模型适配、训练与预测
+  physics/              # 建议新增；量纲验证、物理转换、Fzong 定义
+  focus_inspection/     # 保留；截面特征、分类、校准、复核
+  evaluation/           # 建议新增；共享拆分、协议、全链路评估编排
+  workflows/            # 建议新增；入库、训练、推理三条流程
+  cli.py                # 保留统一入口，旧命令保持兼容
+utils/                  # 复用 runs、provenance 等追溯工具</code></pre>
+  <p class="muted">这是职责草图，不要求立即搬迁全部文件。先用薄接口复用现有函数，经过测试后再移动实现，减少历史脚本与结果兼容性风险。</p>
+</section>
+
+<section id="delivery">
+  <span class="num">09 / CONTRACTS &amp; OUTPUTS</span><h2>把一次运行变成可复查、可复现的结果包</h2>
+  <div class="two-col"><div><h3>建议接口（尚未实现）</h3><pre><code>audit(input, task_contract)
+  -> DatasetSnapshot, AuditReport
+
+evaluate(snapshot, model_spec, protocol)
+  -> OOFTable, Metrics, FoldManifest
+
+fit_release(snapshot, frozen_recipe)
+  -> ModelBundle
+
+predict(request, model_bundle)
+  -> PointPredictions, FocusPredictions</code></pre></div><div><h3>建议结果目录</h3><pre><code>results/system/runs/&lt;run_id&gt;/
+  request.json / manifest.json
+  audit.json / issues.csv
+  query_points.parquet
+  point_predictions.parquet
+  focus_predictions.csv
+  diagnostics.csv
+  metrics.json        # 仅存在真值评估时
+  fold_manifest.csv  # 仅交叉验证时
+  report.html / figures/</code></pre></div></div>
+  <p><strong>模型包至少包含：</strong>任务与类别定义、checkpoint 身份、训练数据 / 上下文快照、特征清单与预处理状态、版本与依赖、训练范围、物理公式版本、评估协议和关联报告。对于当前 TabPFN 配方机制，保存一个 checkpoint 路径并不足以复现预测，还要固定训练上下文及配置。</p>
+  <p><strong>两种输出粒度：</strong>点表以 <code>sample_id + point_id</code> 连接坐标、FD、FL、Fzong 和状态；聚焦表每个截面工况一行，包含 <code>predicted_label</code>、各类概率、<code>review_status</code> 和原因。REVIEW 是操作状态，不是额外的物理聚焦类别。</p>
+  <p><strong>失败处理：</strong>部分点失败时输出明确状态和覆盖分母；不能用零填充缺失力。物理转换不可用时，返回已完成的 FD_u / FL 与原因，并将下游标记为未执行；模型不可用时不自动把经验公式伪装成模型预测。</p>
+  <p><strong>缓存身份：</strong>输入内容、点序、模型、预处理、网格、特征和物理公式版本共同决定缓存键；支持复用数值结果重新绘图。</p>
+</section>
+
+<section id="roadmap">
+  <span class="num">10 / IMPLEMENTATION</span><h2>按可以验收的里程碑推进</h2>
+  <div class="timeline">
+    <div class="phase"><h3>P0 · 明确任务与物理定义</h3><p>确认 FD-u 是什么、各 FL 分量与单位、Fzong 公式、R 的含义与单位、F/UF 或 WF/F/UF 标签目标。形成带版本的数据字典。</p><p class="muted">验收：一组已知输入可人工复算，坐标 / 单位转换与物理量定义一致。</p></div>
+    <div class="phase"><h3>P1 · 统一审核与几何身份</h3><p>为 FD/FL/Fzong/标签表和几何请求增加任务契约，复用审核与单位代码，输出可追溯快照；建立跨文件几何和样本关联。</p><p class="muted">验收：重复、单位冲突、坏几何、标签错配均产生明确记录；m 与 um 表达同一几何时标准结果一致。</p></div>
+    <div class="phase"><h3>P2 · 建立可信评估基线</h3><p>固定几何五折与空间协议，比较基线回归器和 TabPFN；分类先复现现有 F/UF 基线。所有原始与派生样本共用拆分规则。</p><p class="muted">验收：每个样本获得一次外层折外预测，相关几何不跨折；保存逐几何、逐目标指标和失败统计。</p></div>
+    <div class="phase"><h3>P3 · 新三角形力场推理</h3><p>新增统一 query 网格与多几何模型包，复用特征实现；在物理定义确认后接入 Fzong。完成分辨率与坐标一致性验证。</p><p class="muted">验收：返回完整查询点、各场结果和覆盖诊断；与独立参考场比较，零交叉及边界位置可核对。</p></div>
+    <div class="phase"><h3>P4 · 端到端聚焦与发布</h3><p>建立折外预测场数据集，训练并验证级联分类器；比较真实场与预测场分类表现，再冻结发布方案并生成模型包。</p><p class="muted">验收：外层测试几何在所有上游训练中不可见；用独立标签验收整条链，所有运行可由版本记录复现。</p></div>
+  </div>
+  <div class="note"><p><strong>第一版范围建议：</strong>先统一显式单位、物理几何分组、FD/FL 独立回归、规则查询网格和 F/UF 判定。把三分类、复杂上游依赖和自适应网格作为后续可独立比较的方案。</p></div>
+  <h3>需要从数据提供者或研究定义中确认的事项</h3>
+  <ol><li><code>u</code> 是速度、某个速度分量、力，还是其他量？它与 FL 的目标单位分别是什么？</li><li><code>Fzong / Fzong2</code> 的确切公式、方向、符号和参考坐标系是什么？是否还依赖粒径、黏度等参数？</li><li>文件中的 10/20/30 和列 R 是否是同一种曲率半径？单位是否一致？</li><li>最终需要 F/UF 还是 WF/F/UF？三类的人工判定标准和跨几何标注覆盖是否具备？</li><li>训练批次间的 FD、FL、Fzong 与聚焦标签能否按同一几何及工况准确关联？</li></ol>
+  <p>这些问题不妨碍先实现审核、契约和评估骨架，但会决定后续力合成与端到端分类是否能够成立。</p>
+</section>
+
+<section id="sources">
+  <span class="num">11 / REPOSITORY EVIDENCE</span><h2>本方案的代码依据与验证范围</h2>
+  <ul class="source-list">
+    <li><span>S1</span><div><a href="../src/data/template_schema.py">src/data/template_schema.py</a><small>字段适配、长度 / 面积倍率与目标列；已核对源码。</small></div></li>
+    <li><span>S2</span><div><a href="FD_FL_PREDICTION_IMPROVEMENTS.md">docs/FD_FL_PREDICTION_IMPROVEMENTS.md</a><small>FD-u 的物理单位未确认、现有原生点预测范围及旧服务限制。</small></div></li>
+    <li><span>S3</span><div><a href="../src/regression/evaluation.py">src/regression/evaluation.py</a><small>internal_split、geometry_signature、external 留一几何与回归指标。</small></div></li>
+    <li><span>S4</span><div><a href="../src/regression/predict_fields.py">src/regression/predict_fields.py</a><small>配对文件逐方向训练、查询点预测、覆盖诊断与 force_sum_computed=false。</small></div></li>
+    <li><span>S5</span><div><a href="../src/focus_inspection/dataset.py">src/focus_inspection/dataset.py</a> · <a href="../src/focus_inspection/evaluation.py">evaluation.py</a> · <a href="../src/focus_inspection/predict_focus.py">predict_focus.py</a><small>标签仅 F/UF、物理几何隔离、配方校验、截面预测及复核信息。</small></div></li>
+    <li><span>S6</span><div><a href="../src/focus_inspection/README.md">src/focus_inspection/README.md</a><small>Excel × R × Re 样本单位、按 z 分行的中值平滑和边界特征定义。</small></div></li>
+    <li><span>S7</span><div><a href="../src/focus_inspection/audit_focus.py">src/focus_inspection/audit_focus.py</a> · <a href="../src/focus_inspection/geometry_integrity.py">geometry_integrity.py</a><small>不加载模型的审核流程，物理几何与命名几何的关联。</small></div></li>
+    <li><span>S8</span><div><a href="../src/cli.py">src/cli.py</a> · <a href="../web-demo/tabpfn_service.py">web-demo/tabpfn_service.py</a> · <a href="../README.md">README.md</a><small>当前入口与模块布局、服务中的经验聚焦 / 半径修正及物理未验证标记。</small></div></li>
+  </ul>
+  <p class="muted">核对日期：2026-10-03。本次完成设计与文档，不重训模型、不改动科学计算代码，也不声称已打通或验收整条链路。文中接口、目录建议和输出契约均为拟议设计；已有行为以链接源码为准。</p>
+</section>
+<footer>FDFLPredictions · 架构重设计讨论稿 · 单文件离线文档。正文无需网络；代码链接适用于文档仍位于本仓库 docs 目录的场景。</footer>
+</main>
+<script>
+const links = [...document.querySelectorAll('nav a')];
+const sections = [...document.querySelectorAll('main section[id]')];
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    const active = entries.filter(entry => entry.isIntersecting).sort((a,b) => a.boundingClientRect.top-b.boundingClientRect.top)[0];
+    if (!active) return;
+    links.forEach(link => { if (link.hash === '#' + active.target.id) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current'); });
+  }, {rootMargin:'-5% 0px -55% 0px',threshold:0});
+  sections.forEach(section => observer.observe(section));
+}
+</script>
+</body>
+</html>

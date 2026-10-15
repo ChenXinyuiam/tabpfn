@@ -27,7 +27,7 @@ import pandas as pd
 from scipy.interpolate import griddata
 from scipy.spatial import ConvexHull
 
-from src.config import PUBLISHED_PROCESSED_ROOT, BASE_COL, RE_COL
+from src.config import BASE_COL, PUBLISHED_PROCESSED_ROOT, RE_COL
 from utils.paths import select_batch_dir
 
 # ── helpers (identical to generate_data.py) ──────────────────────────────────
@@ -111,7 +111,6 @@ def generate_per_re(src: Path) -> pd.DataFrame | None:
         sub = df[df[col_sp] == sp].copy()   # ← ONLY this Re level
 
         sub_XZ  = sub[["X", "Z"]].drop_duplicates().values.astype(float)
-        sub_map  = sub.set_index(["X", "Z"])  # for exact-value lookup
 
         # ── dense grid for THIS Re level only ─────────────────────────────
         dx = _detect_spacing(sub["X"].values)

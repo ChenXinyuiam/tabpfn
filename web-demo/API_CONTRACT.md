@@ -1,84 +1,68 @@
 # TriFocus ForceLab API Contract
 
-This document describes the demo backend used by the website.
+## `GET /api/health`
 
-## Base URL
+返回模型是否加载、是否使用 TabPFN、默认采样点数、Re 列表和曲率半径范围。
 
-```text
-http://127.0.0.1:8000
-```
+## `POST /api/predict-triangle`
 
-## GET /api/health
-
-Checks whether the backend is running.
-
-Example response:
+### 自动采样请求
 
 ```json
 {
-  "status": "ok",
-  "engine": "python-demo-backend",
-  "model_loaded": true,
-  "model_version": "demo-backend-v2-radius",
-  "uses_tabpfn": false,
-  "point_count_per_re": 200,
-  "re_values": [6, 12, 18, 24, 30, 36, 42, 48, 54, 60],
-  "supported_radius_groups": [10, 20, 30]
+  "side_ab_um": 500,
+  "side_ac_um": 500,
+  "side_bc_um": 600,
+  "curvature_radius_um": 1200
 }
 ```
 
-## GET /api/schema
+服务会在三角形内部生成 400 个 Halton 点，并对 `Re = 6, 12, ..., 60` 预测。
 
-Returns the API shape, data contract, Re sweep, sample count, and current model boundary.
-
-Use this endpoint during judging if someone asks what data the demo produces.
-
-## POST /api/predict-triangle
-
-Generates a complete force-field prediction from three triangle side lengths and a required curvature-radius group.
-
-Request:
+### 指定位置请求
 
 ```json
 {
-  "side_ab_um": 690,
-  "side_ac_um": 520,
-  "side_bc_um": 750,
-  "radius_group": 20
+  "side_ab_um": 500,
+  "side_ac_um": 500,
+  "side_bc_um": 600,
+  "curvature_radius_um": 1200,
+  "positions": [
+    {"point_id": "p1", "x_um": 300, "z_um": 100},
+    {"point_id": "p2", "x_um": 300, "z_um": 20}
+  ]
 }
 ```
 
-Response fields:
+指定点必须位于三角形内部。`x_um`、`z_um` 单位均为微米。
 
-- `geometry`: triangle vertices, area, perimeter, aspect ratio, inradius, and centroid.
-- `basePoints`: 200 generated internal sampling points.
-- `sweep`: prediction rows grouped by Reynolds number.
-- `bestRe`: the Reynolds number with the best predicted focusing score.
-- `focus`: predicted focus center, radius, score, status, and Re window.
-- `prediction_meta`: engine, model version, `radius_group`, FD model route, generated row count, latency, output modes, and TabPFN status.
-
-## Current Model Boundary
-
-The current backend is a deterministic demonstration surrogate. It is designed to make the full website pipeline demonstrable:
+### 逐点输出
 
 ```text
-three side lengths + radius_group (10 / 20 / 30)
-  -> triangle validation and geometry
-  -> 200 internal sample points
-  -> Re sweep
-  -> radius-specific FD route
-  -> FL-x / FL-y / Dean-x / Dean-y
-  -> total force field
-  -> focus window and focus location
+fl_pred
+fd_pred
+fnet_pred = fl_pred + fd_pred
+fnet_x
+fnet_z
+fnet_magnitude
 ```
 
-It does not call TabPFN yet. The production upgrade should keep the same endpoint and replace only the predictor implementation:
+兼容字段仍包括 `fl_x_pred`、`fl_y_pred`、`fd_x_pred`、`fd_y_pred`、`total_force_x`、`total_force_y`、`total_force_magnitude`。
 
-```text
-POST /api/predict-triangle
-  -> generate feature table
-  -> route the FD model by radius_group
-  -> call TabPFN FD/FL models
-  -> aggregate force field
-  -> return the same response contract
+`prediction_meta.data_source` 为：
+
+- `provided_positions`：使用请求提供的位置。
+- `halton_sampled_positions`：服务自动采样。
+
+必须检查 `prediction_meta.uses_tabpfn`。只有它为 `true` 时，输出才来自已加载的 TabPFN 模型。
+
+## 单次文件预测
+
+```powershell
+.\.venv\Scripts\python.exe web-demo\tabpfn_service.py `
+  --model-dir models\tabpfn_server_500 `
+  --predict-json web-demo\examples\triangle_with_positions.json `
+  --output-json results\triangle_force_with_positions.json
 ```
+
+完整验证边界见 `docs/FD_FL_CLOSED_LOOP.md`。
